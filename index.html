@@ -7,34 +7,35 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: #0a0b10; }
+    html, body { height: 100%; background: #ffffff; }
     ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-thumb { background: #252636; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 3px; }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState } = React;
+const { useState, useRef, useCallback } = React;
 
+/* ── UNIFIED PALETTE — all same saturation/brightness family ─────────────── */
 const C = {
-  glutGABA:     "#ff7040",
-  calcium:      "#4aa8ff",
-  vesicles:     "#aa70ff",
-  cytoskeleton: "#30e878",
-  mitochondria: "#ffbe00",
-  oxphos:       "#ff3060",
-  ribosomes:    "#00dcd0",
+  glutGABA:     "#E84C1E",  /* vermillion   */
+  calcium:      "#1A6FD4",  /* cobalt       */
+  vesicles:     "#7B3FD4",  /* violet       */
+  cytoskeleton: "#0F9E55",  /* emerald      */
+  mitochondria: "#C98500",  /* amber        */
+  oxphos:       "#D41A42",  /* crimson      */
+  ribosomes:    "#0898A0",  /* teal         */
 };
 
 const NODES = {
   glutGABA: {
     id:"glutGABA", abbr:"Glu / GABA", label:["Glutamato","& GABA"],
     color:C.glutGABA, cx:430, cy:135,
-    desc:"Eje central de la disrupción neurobiológica por alcohol. Mecanísticamente aguas arriba de la mayoría de los demás cambios proteómicos. Correlaciona con los déficits conductuales del modelo.",
+    desc:"Eje central de la disrupción neurobiológica por alcohol. Mecanísticamente aguas arriba de la mayoría de los demás cambios proteómicos.",
     males:[
       {gene:"GLS",              dir:"↑", logFC:null,  pval:null,  note:"Gln→Glu; desvío hacia catabolismo energético"},
       {gene:"GAD1",             dir:"↑", logFC:0.45,  pval:0.010, note:"Síntesis GABA"},
@@ -61,7 +62,7 @@ const NODES = {
       {gene:"KCNJ3 (GIRK1)", dir:"↓", logFC:-0.86, pval:0.045, note:"Canal K⁺ GABA-B reducido"},
       {gene:"NTRK2 (TrkB)",  dir:"↓", logFC:null,  pval:null,  note:"Receptor BDNF; señalización neurotrófica ↓"},
     ],
-    alcohol:"El alcohol potencia GABA e inhibe NMDA agudamente. La desregulación crónica es adaptación compensatoria: en machos el glutamato se desvía al catabolismo energético (circuito agotado + feedback colapsado → déficit de memoria); en hembras el sistema NMDA se potencia estructuralmente, generando un patrón compatible con vigilancia aumentada más que con daño de circuito."
+    alcohol:"El alcohol potencia GABA e inhibe NMDA agudamente. La desregulación crónica es adaptación compensatoria: en machos el glutamato se desvía al catabolismo energético (circuito agotado + feedback colapsado → déficit de memoria); en hembras el sistema NMDA se potencia estructuralmente, generando un patrón compatible con vigilancia aumentada."
   },
   calcium: {
     id:"calcium", abbr:"Ca²⁺", label:["Señalización","Ca²⁺"],
@@ -86,7 +87,7 @@ const NODES = {
   vesicles: {
     id:"vesicles", abbr:"Vesículas", label:["Tráfico","Vesicular"],
     color:C.vesicles, cx:715, cy:325,
-    desc:"Alteraciones en exocitosis, reciclaje y endocitosis sináptica. Machos: potenciación exocitótica compensatoria; hembras: remodelación endocítica con posibles signos de envejecimiento prematuro.",
+    desc:"Alteraciones en exocitosis, reciclaje y endocitosis sináptica. Machos: potenciación exocitótica; hembras: remodelación endocítica con posibles signos de envejecimiento prematuro.",
     males:[
       {gene:"SYT1",             dir:"↑", logFC:0.34,  pval:0.044, note:"Sinaptotagmina; exocitosis Ca²⁺-disparada"},
       {gene:"CPLX2",            dir:"↑", logFC:null,  pval:null,  note:"Complexina; fusión vesicular"},
@@ -95,7 +96,7 @@ const NODES = {
       {gene:"CLTA",             dir:"↑", logFC:0.36,  pval:0.045, note:"Clatrina; endocitosis mediada"},
       {gene:"RABEP1",           dir:"↑", logFC:0.35,  pval:0.035, note:"Efector Rab5; maduración endosoma"},
       {gene:"SH3GL1",           dir:"↑", logFC:0.40,  pval:0.016, note:"Curvatura membrana; inicio endocitosis"},
-      {gene:"ATP6AP2",          dir:"↓", logFC:null,  pval:null,  note:"V-ATPasa; posible fallo acidificación vesicular"},
+      {gene:"ATP6AP2",          dir:"↓", logFC:null,  pval:null,  note:"V-ATPasa; fallo acidificación vesicular"},
       {gene:"ATP6V0A1",         dir:"↓", logFC:null,  pval:null,  note:"V-ATPasa subunidad a1"},
     ],
     females:[
@@ -129,11 +130,11 @@ const NODES = {
       {gene:"MAPT/MARK1/TSC2",dir:"~", logFC:null,  pval:null,  note:"Tau hipofosforilado (fosfoproteómica)"},
     ],
     females:[
-      {gene:"TMOD2",   dir:"↑", logFC:0.29,  pval:0.004, note:"Estabilización extremos actina (compartido)"},
-      {gene:"ACTR2",   dir:"↑", logFC:0.29,  pval:0.004, note:"Arp2/3; reorientación hacia filamentos lineales"},
+      {gene:"TMOD2",   dir:"↑", logFC:0.29,  pval:0.004, note:"Estabilización extremos actina"},
+      {gene:"ACTR2",   dir:"↑", logFC:0.29,  pval:0.004, note:"Arp2/3; reorientación filamentos lineales"},
       {gene:"DYNLRB1", dir:"↑", logFC:0.16,  pval:0.031, note:"Transporte retrógrado"},
       {gene:"ARPC1B",  dir:"↓", logFC:-0.46, pval:0.005, note:"Arp2/3; ↓ nucleación ramificada"},
-      {gene:"TUBA4A",  dir:"↓", logFC:null,  pval:null,  note:"↓ poliglutamilación → neuroprotección; ↓ agregación tau"},
+      {gene:"TUBA4A",  dir:"↓", logFC:null,  pval:null,  note:"↓ poliglutamilación → neuroprotección"},
     ],
     alcohol:"El alcohol altera morfología de espinas dendríticas y plasticidad sináptica. La divergencia en tau (hipofosforilación machos / hiperfosforilación hembras) es crítica para el riesgo diferencial de demencia relacionada con alcohol entre sexos."
   },
@@ -154,11 +155,11 @@ const NODES = {
     ],
     females:[
       {gene:"PGAM1",    dir:"↓", logFC:null,  pval:null,    note:"Bloqueo selectivo glucólisis"},
-      {gene:"PDHB",     dir:"↓", logFC:null,  pval:null,    note:"Piruvato → Acetil-CoA limitado; ↓ TCA"},
+      {gene:"PDHB",     dir:"↓", logFC:null,  pval:null,    note:"↓ entrada TCA → cetogénesis"},
       {gene:"ACACA",    dir:"↑", logFC:0.24,  pval:0.032,   note:"Lipogénesis de novo; ¿restauración mielina?"},
       {gene:"HMGCS2",   dir:"↑", logFC:0.40,  pval:0.015,   note:"Cetogénesis"},
       {gene:"HMGCL",    dir:"↑", logFC:null,  pval:null,    note:"HMG-CoA → acetoacetato"},
-      {gene:"BDH1",     dir:"↓", logFC:-0.30, pval:0.004,   note:"β-HB sintasa ↓ → acetoacetato → GPR43-BDNF"},
+      {gene:"BDH1",     dir:"↓", logFC:-0.30, pval:0.004,   note:"β-HB sintasa ↓ → GPR43-BDNF"},
       {gene:"CRAT",     dir:"↑", logFC:0.36,  pval:0.016,   note:"Lanzadera acetil-CoA mitocondrial"},
       {gene:"MAPK8IP3", dir:"↓", logFC:-0.26, pval:0.00005, note:"GPR43-pERK downstream"},
     ],
@@ -185,7 +186,7 @@ const NODES = {
       {gene:"NDUFS4",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; estructural"},
       {gene:"NDUFS2",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; centros Fe-S"},
       {gene:"NDUFV3",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; regulación fina"},
-      {gene:"NDUFV2",  dir:"↓", logFC:null, pval:null,    note:"Complejo I; flavoproteína; oxidación NADH"},
+      {gene:"NDUFV2",  dir:"↓", logFC:null, pval:null,    note:"Complejo I; flavoproteína"},
       {gene:"NDUFA11", dir:"↓", logFC:null, pval:null,    note:"Complejo I; supercomplejo respiratorio"},
       {gene:"UQCRC1",  dir:"↑", logFC:0.29, pval:0.022,   note:"Complejo III; flujo electrones"},
       {gene:"UQCRQ",   dir:"↑", logFC:0.23, pval:"7.3e-5",note:"Complejo III"},
@@ -214,7 +215,6 @@ const NODES = {
       {gene:"RPL14", dir:"↑", logFC:null, pval:null, note:"60S"},
       {gene:"RPL15", dir:"↑", logFC:null, pval:null, note:"60S"},
       {gene:"RPL27", dir:"↑", logFC:null, pval:null, note:"60S"},
-      {gene:"RPL34", dir:"↑", logFC:null, pval:null, note:"60S"},
       {gene:"RPS12", dir:"↑", logFC:null, pval:null, note:"40S"},
       {gene:"RPS19", dir:"↑", logFC:null, pval:null, note:"40S"},
       {gene:"RPS23", dir:"↑", logFC:null, pval:null, note:"40S"},
@@ -224,17 +224,17 @@ const NODES = {
 };
 
 const EDGES = [
-  {from:"glutGABA",    to:"calcium",       label:"NMDA → Ca²⁺",           color:"#aa70ff"},
-  {from:"calcium",     to:"vesicles",      label:"exocitosis Ca²⁺",        color:"#4aa8ff"},
-  {from:"calcium",     to:"cytoskeleton",  label:"GSN Ca²⁺-dep.",          color:"#30e878"},
-  {from:"glutGABA",    to:"mitochondria",  label:"Glu → catabolismo",      color:"#ffbe00"},
-  {from:"mitochondria",to:"oxphos",        label:"TCA → OXPHOS",           color:"#ff3060"},
-  {from:"vesicles",    to:"oxphos",        label:"demanda ATP",             color:"#aa70ff"},
-  {from:"cytoskeleton",to:"vesicles",      label:"actina endocítica",       color:"#00dcd0"},
-  {from:"oxphos",      to:"ribosomes",     label:"ATP → traducción",        color:"#ff7040"},
-  {from:"ribosomes",   to:"cytoskeleton",  label:"proteínas estructurales", color:"#00dcd0"},
-  {from:"glutGABA",    to:"vesicles",      label:"reciclaje NT",            color:"#ff7040"},
-  {from:"mitochondria",to:"cytoskeleton",  label:"tau / energía",           color:"#30e878"},
+  {from:"glutGABA",    to:"calcium",       label:"NMDA → Ca²⁺",           color:"#7B3FD4"},
+  {from:"calcium",     to:"vesicles",      label:"exocitosis Ca²⁺",        color:"#1A6FD4"},
+  {from:"calcium",     to:"cytoskeleton",  label:"GSN Ca²⁺-dep.",          color:"#0F9E55"},
+  {from:"glutGABA",    to:"mitochondria",  label:"Glu → catabolismo",      color:"#C98500"},
+  {from:"mitochondria",to:"oxphos",        label:"TCA → OXPHOS",           color:"#D41A42"},
+  {from:"vesicles",    to:"oxphos",        label:"demanda ATP",             color:"#7B3FD4"},
+  {from:"cytoskeleton",to:"vesicles",      label:"actina endocítica",       color:"#0898A0"},
+  {from:"oxphos",      to:"ribosomes",     label:"ATP → traducción",        color:"#E84C1E"},
+  {from:"ribosomes",   to:"cytoskeleton",  label:"proteínas estructurales", color:"#0898A0"},
+  {from:"glutGABA",    to:"vesicles",      label:"reciclaje NT",            color:"#E84C1E"},
+  {from:"mitochondria",to:"cytoskeleton",  label:"tau / energía",           color:"#0F9E55"},
 ];
 
 const R = 52;
@@ -246,31 +246,92 @@ function edgePts(a, b) {
   return { x1:a.cx+ux*R, y1:a.cy+uy*R, x2:b.cx-ux*R, y2:b.cy-uy*R, mx:(a.cx+b.cx)/2, my:(a.cy+b.cy)/2 };
 }
 
-function ProteinRow({p, nodeColor}) {
-  const dc = p.dir==="↑" ? "#30e878" : p.dir==="↓" ? "#ff5050" : "#888";
+/* ── Draggable modal ─────────────────────────────────────────────────────── */
+function AlcoholModal({ node, onClose }) {
+  const [pos, setPos] = useState({ x: window.innerWidth/2 - 230, y: window.innerHeight/2 - 140 });
+  const dragging = useRef(false);
+  const origin   = useRef({});
+
+  const onMouseDown = useCallback(e => {
+    dragging.current = true;
+    origin.current = { mx: e.clientX, my: e.clientY, px: pos.x, py: pos.y };
+    e.preventDefault();
+  }, [pos]);
+
+  const onMouseMove = useCallback(e => {
+    if (!dragging.current) return;
+    setPos({ x: origin.current.px + e.clientX - origin.current.mx, y: origin.current.py + e.clientY - origin.current.my });
+  }, []);
+
+  const onMouseUp = useCallback(() => { dragging.current = false; }, []);
+
   return (
-    <div style={{display:"flex",gap:8,alignItems:"flex-start",
-      borderLeft:`2px solid ${nodeColor}`,paddingLeft:8,
-      paddingTop:4,paddingBottom:4,marginBottom:2}}>
-      <span style={{color:dc,fontWeight:700,fontSize:14,minWidth:14,flexShrink:0,
-        fontFamily:"'IBM Plex Mono',monospace"}}>{p.dir}</span>
-      <div style={{flex:1,minWidth:0}}>
-        <span style={{fontSize:12,fontWeight:600,color:nodeColor,
-          fontFamily:"'IBM Plex Mono',monospace"}}>{p.gene}</span>
-        {(p.logFC!==null||p.pval!==null) && (
-          <span style={{fontSize:10,color:"#555",fontFamily:"'IBM Plex Mono',monospace",marginLeft:8}}>
-            {p.logFC!==null?`logFC ${p.logFC>0?"+":""}${p.logFC}`:""}
-            {p.logFC!==null&&p.pval!==null?" · ":""}
-            {p.pval!==null?`p=${p.pval}`:""}
-          </span>
-        )}
-        <div style={{fontSize:11,color:"#888",lineHeight:1.4,marginTop:1,
-          fontFamily:"'IBM Plex Sans',sans-serif"}}>{p.note}</div>
+    <div style={{position:"fixed",inset:0,zIndex:1000,pointerEvents:"none"}} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
+      <div style={{
+        position:"absolute", left:pos.x, top:pos.y,
+        width:460, background:"#fff",
+        border:`2px solid ${node.color}`,
+        borderRadius:12,
+        boxShadow:`0 16px 60px ${node.color}25, 0 4px 16px rgba(0,0,0,0.10)`,
+        pointerEvents:"all", userSelect:"none",
+        fontFamily:"'DM Sans', sans-serif",
+      }}>
+        <div onMouseDown={onMouseDown} style={{
+          background:node.color, padding:"12px 16px", borderRadius:"10px 10px 0 0",
+          cursor:"grab", display:"flex", alignItems:"center", justifyContent:"space-between",
+        }}>
+          <div>
+            <div style={{fontSize:9,color:"rgba(255,255,255,0.7)",fontFamily:"'DM Mono',monospace",letterSpacing:".14em",textTransform:"uppercase",marginBottom:2}}>
+              Nexo con Alcohol
+            </div>
+            <div style={{fontSize:14,fontWeight:700,color:"#fff",fontFamily:"'Syne',sans-serif"}}>
+              {node.label.join(" ")}
+            </div>
+          </div>
+          <button onClick={onClose} style={{
+            background:"rgba(255,255,255,0.2)", border:"none", borderRadius:6,
+            color:"#fff", cursor:"pointer", fontSize:18, fontWeight:700,
+            width:30, height:30, display:"flex", alignItems:"center", justifyContent:"center",
+          }}>×</button>
+        </div>
+        <div style={{padding:"18px 20px"}}>
+          <p style={{margin:0, fontSize:13.5, color:"#333", lineHeight:1.85, fontFamily:"'DM Sans',sans-serif"}}>
+            {node.alcohol}
+          </p>
+          <div style={{marginTop:14,fontSize:10,color:"#bbb",fontFamily:"'DM Mono',monospace",letterSpacing:".08em",textAlign:"right"}}>
+            — arrastra para mover · × para cerrar
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
+/* ── Protein row ─────────────────────────────────────────────────────────── */
+function ProteinRow({p, nodeColor}) {
+  const dc = p.dir==="↑" ? "#0F9E55" : p.dir==="↓" ? "#D41A42" : "#999";
+  return (
+    <div style={{display:"flex",gap:8,alignItems:"flex-start",
+      borderLeft:`2px solid ${nodeColor}`,paddingLeft:9,
+      paddingTop:5,paddingBottom:5,marginBottom:2}}>
+      <span style={{color:dc,fontWeight:700,fontSize:15,minWidth:16,flexShrink:0,
+        fontFamily:"'DM Mono',monospace"}}>{p.dir}</span>
+      <div style={{flex:1,minWidth:0}}>
+        <span style={{fontSize:12,fontWeight:600,color:nodeColor,fontFamily:"'DM Mono',monospace"}}>{p.gene}</span>
+        {(p.logFC!==null||p.pval!==null) && (
+          <span style={{fontSize:10,color:"#bbb",fontFamily:"'DM Mono',monospace",marginLeft:8}}>
+            {p.logFC!==null?`logFC ${p.logFC>0?"+":""}${p.logFC}`:""}
+            {p.logFC!==null&&p.pval!==null?" · ":""}
+            {p.pval!==null?`p=${p.pval}`:""}
+          </span>
+        )}
+        <div style={{fontSize:11.5,color:"#777",lineHeight:1.45,marginTop:2,fontFamily:"'DM Sans',sans-serif"}}>{p.note}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Main App ────────────────────────────────────────────────────────────── */
 function App() {
   const [sel, setSel]         = useState(null);
   const [tab, setTab]         = useState("males");
@@ -280,84 +341,102 @@ function App() {
   const activeEdges = sel ? EDGES.filter(e=>e.from===sel||e.to===sel) : [];
   const connected   = new Set(activeEdges.flatMap(e=>[e.from,e.to]));
 
-  const mono = "'IBM Plex Mono', monospace";
-  const sans = "'IBM Plex Sans', sans-serif";
-
   return (
-    <div style={{display:"flex",flexDirection:"column",height:"100vh",
-      background:"#0a0b10",color:"#ddd8cc",fontFamily:sans,overflow:"hidden"}}>
-
+    <div style={{display:"flex",flexDirection:"column",height:"100vh",background:"#ffffff",color:"#111",overflow:"hidden",fontFamily:"'DM Sans',sans-serif"}}>
       <style>{`
-        *{box-sizing:border-box}
-        ::-webkit-scrollbar{width:4px}
-        ::-webkit-scrollbar-thumb{background:#202130;border-radius:2px}
-        .nd{cursor:pointer;transition:opacity .15s}
-        .tb{cursor:pointer;border:1px solid #2a2b3a;background:transparent;color:#666;
-            font-size:10px;padding:5px 14px;border-radius:2px;font-family:'IBM Plex Mono',monospace;
-            letter-spacing:.07em;transition:all .15s}
-        .tb:hover{color:#ccc;border-color:#555}
-        .tb.on{background:#141520;color:#ddd8cc;border-color:#555}
-        .ab{cursor:pointer;border:1px solid #ffbe0066;background:transparent;color:#ffbe00;
-            font-size:10px;padding:5px 13px;border-radius:2px;font-family:'IBM Plex Mono',monospace;
-            letter-spacing:.07em;text-transform:uppercase;transition:all .15s}
-        .ab:hover,.ab.on{background:#ffbe0018;border-color:#ffbe00}
-        .nc{cursor:pointer;border:1px solid #1e1f2e;border-radius:3px;padding:8px 10px;transition:background .12s}
-        @keyframes pulse{0%,100%{opacity:.4}50%{opacity:.85}}
+        * { box-sizing:border-box; }
+        ::-webkit-scrollbar{width:5px}
+        ::-webkit-scrollbar-thumb{background:#e8e8e8;border-radius:3px}
+        .nd{cursor:pointer;transition:opacity .18s}
+        .tb{cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#888;
+            font-size:11px;padding:7px 16px;border-radius:20px;
+            font-family:'DM Mono',monospace;letter-spacing:.05em;transition:all .15s;font-weight:500}
+        .tb:hover{color:#333;border-color:#bbb;background:#f8f8f8}
+        .tb.on{background:#111;color:#fff;border-color:#111;font-weight:600}
+        .ab{cursor:pointer;border:1.5px solid #C98500;background:#fff;color:#C98500;
+            font-size:11px;padding:7px 16px;border-radius:20px;
+            font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;
+            transition:all .15s;font-weight:600}
+        .ab:hover,.ab.on{background:#C9850012}
+        .nc{cursor:pointer;border:1.5px solid #f0f0f0;border-radius:8px;padding:10px 12px;
+            background:#fafafa;transition:all .15s}
+        .nc:hover{border-color:inherit;background:#f5f5f5}
+        @keyframes pulse{0%,100%{opacity:.45}50%{opacity:.88}}
         .hub{animation:pulse 3.5s ease-in-out infinite}
       `}</style>
 
-      {/* HEADER */}
-      <div style={{borderBottom:"1px solid #151620",padding:"9px 22px",
-        display:"flex",alignItems:"center",gap:14,flexShrink:0}}>
-        <span style={{fontSize:9,color:"#333",fontFamily:mono,letterSpacing:".22em",textTransform:"uppercase"}}>
-          Mapa Interactivo
-        </span>
-        <h1 style={{margin:0,fontSize:14,fontWeight:500,color:"#ddd8cc",fontFamily:sans}}>
-          Desregulación Proteómica · Alcohol · Hipocampo
-        </h1>
-        <span style={{marginLeft:"auto",fontSize:9,color:"#333",fontFamily:mono}}>
-          7 vías · 11 conexiones · dimorfismo sexual
-        </span>
+      {/* ── HEADER ──────────────────────────────────────────────────────── */}
+      <div style={{
+        borderBottom:"1.5px solid #f0f0f0", padding:"14px 28px",
+        display:"flex", alignItems:"center", gap:20,
+        flexShrink:0, background:"#fff",
+      }}>
+        <div>
+          <div style={{fontSize:10,color:"#ccc",fontFamily:"'DM Mono',monospace",letterSpacing:".2em",textTransform:"uppercase",marginBottom:3}}>
+            Mapa Interactivo · Hipocampo
+          </div>
+          <h1 style={{margin:0,fontSize:18,fontWeight:800,color:"#111",fontFamily:"'Syne',sans-serif",letterSpacing:"-.01em"}}>
+            Desregulación Proteómica por Alcohol
+          </h1>
+        </div>
+        <div style={{marginLeft:"auto",display:"flex",gap:8,alignItems:"center"}}>
+          {[["7","vías"],["11","conexiones"],["2","sexos"]].map(([n,l])=>(
+            <div key={l} style={{
+              background:"#f5f5f5", border:"1px solid #e8e8e8",
+              borderRadius:20, padding:"4px 12px",
+              display:"flex", alignItems:"center", gap:5,
+            }}>
+              <span style={{fontSize:13,fontWeight:700,color:"#111",fontFamily:"'Syne',sans-serif"}}>{n}</span>
+              <span style={{fontSize:10,color:"#aaa",fontFamily:"'DM Mono',monospace",letterSpacing:".05em"}}>{l}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* BODY */}
+      {/* ── BODY ────────────────────────────────────────────────────────── */}
       <div style={{display:"flex",flex:1,minHeight:0}}>
 
         {/* MAP */}
         <div style={{flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",
-          padding:"10px 8px 10px 12px",borderRight:"1px solid #151620",overflowX:"auto"}}>
+          padding:"12px 8px 12px 12px",borderRight:"1.5px solid #f0f0f0",
+          background:"#fdfdfd",overflowX:"auto"}}>
           <svg viewBox={`0 0 ${VW} ${VH}`} width={VW} height={VH} style={{display:"block"}}>
             <defs>
               {EDGES.map((e,i)=>(
-                <marker key={i} id={`a${i}`} markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
-                  <path d="M0,0L0,5L7,2.5z" fill={e.color}/>
+                <marker key={i} id={`a${i}`} markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                  <path d="M0,0.5 L0,5.5 L7.5,3z" fill={e.color}/>
                 </marker>
               ))}
               {Object.values(NODES).map(n=>(
                 <radialGradient key={n.id} id={`g${n.id}`} cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor={n.color} stopOpacity=".30"/>
-                  <stop offset="100%" stopColor={n.color} stopOpacity=".05"/>
+                  <stop offset="0%" stopColor={n.color} stopOpacity=".14"/>
+                  <stop offset="100%" stopColor={n.color} stopOpacity=".02"/>
                 </radialGradient>
               ))}
             </defs>
 
-            {/* Edges */}
+            {/* Edges — uniform 2px, pill label backgrounds */}
             {EDGES.map((e,i)=>{
               const a=NODES[e.from], b=NODES[e.to];
               const p=edgePts(a,b);
               const active=activeEdges.includes(e);
               const dim=sel&&!active;
+              const lw = p.label ? p.label.length * 5.5 + 16 : 0;
               return (
-                <g key={i} opacity={dim?.06:active?1:.35}>
+                <g key={i} opacity={dim?.06:active?1:.38}>
                   <line x1={p.x1} y1={p.y1} x2={p.x2} y2={p.y2}
-                    stroke={e.color} strokeWidth={active?2.2:1.2}
+                    stroke={e.color} strokeWidth={2}
                     strokeDasharray={active?"none":"5,4"}
                     markerEnd={`url(#a${i})`}/>
                   {active&&(
-                    <text x={p.mx} y={p.my-7} textAnchor="middle" fontSize="9"
-                      fill={e.color} style={{fontFamily:mono}}>
-                      {e.label}
-                    </text>
+                    <g>
+                      <rect x={p.mx - lw/2} y={p.my-18} width={lw} height={16}
+                        rx={8} fill="white" stroke={e.color} strokeWidth="1.2" opacity=".95"/>
+                      <text x={p.mx} y={p.my-7} textAnchor="middle" fontSize="9"
+                        fill={e.color} style={{fontFamily:"'DM Mono',monospace",fontWeight:600}}>
+                        {e.label}
+                      </text>
+                    </g>
                   )}
                 </g>
               );
@@ -365,36 +444,38 @@ function App() {
 
             {/* Alcohol hub */}
             <g className="hub">
-              <circle cx={430} cy={310} r={34} fill="none"
-                stroke="#ffbe00" strokeWidth="1.2" strokeDasharray="3,4"/>
-              <text x={430} y={306} textAnchor="middle" fontSize="10"
-                fill="#ffbe00" style={{fontFamily:mono,letterSpacing:".16em"}}>EtOH</text>
-              <text x={430} y={321} textAnchor="middle" fontSize="8"
-                fill="#cc9800" style={{fontFamily:mono,letterSpacing:".1em"}}>ALCOHOL</text>
+              <circle cx={430} cy={310} r={36} fill="#FFF9EC"
+                stroke="#C98500" strokeWidth="1.8"/>
+              <text x={430} y={306} textAnchor="middle" fontSize="11"
+                fill="#C98500" style={{fontFamily:"'DM Mono',monospace",letterSpacing:".14em",fontWeight:600}}>EtOH</text>
+              <text x={430} y={321} textAnchor="middle" fontSize="8.5"
+                fill="#a06800" style={{fontFamily:"'DM Mono',monospace",letterSpacing:".1em"}}>ALCOHOL</text>
             </g>
 
-            {/* Nodes */}
+            {/* Nodes — all solid borders, unified style */}
             {Object.values(NODES).map(n=>{
               const isSel=sel===n.id;
               const dim=sel&&!connected.has(n.id);
               return (
-                <g key={n.id} className="nd" opacity={dim?.15:1}
+                <g key={n.id} className="nd" opacity={dim?.14:1}
                   onClick={()=>{setSel(sel===n.id?null:n.id);setTab("males");setShowAlc(false);}}>
-                  {isSel&&<circle cx={n.cx} cy={n.cy} r={R+13} fill="none"
-                    stroke={n.color} strokeWidth="1.5" opacity=".5"/>}
+                  {isSel&&<circle cx={n.cx} cy={n.cy} r={R+14} fill="none"
+                    stroke={n.color} strokeWidth="2" opacity=".3"/>}
                   <circle cx={n.cx} cy={n.cy} r={R} fill={`url(#g${n.id})`}/>
+                  {/* solid border, same weight all, thicker when selected */}
                   <circle cx={n.cx} cy={n.cy} r={R} fill="none"
-                    stroke={n.color} strokeWidth={isSel?2.5:1.8}
-                    strokeOpacity={isSel?1:.85}/>
-                  <text x={n.cx} y={n.cy-8}
-                    textAnchor="middle" fontSize="11.5" fill={n.color}
-                    style={{fontFamily:mono,fontWeight:600,letterSpacing:".04em"}}>
+                    stroke={n.color} strokeWidth={isSel?3:1.8}/>
+                  {/* abbr — primary label, full opacity */}
+                  <text x={n.cx} y={n.cy-7}
+                    textAnchor="middle" fontSize="12" fill={n.color}
+                    style={{fontFamily:"'DM Mono',monospace",fontWeight:600,letterSpacing:".03em"}}>
                     {n.abbr}
                   </text>
+                  {/* subtitle — reduced opacity for hierarchy */}
                   {n.label.map((l,li)=>(
                     <text key={li} x={n.cx} y={n.cy+9+(li*12)}
                       textAnchor="middle" fontSize="8" fill={n.color}
-                      style={{fontFamily:mono,opacity:.7,letterSpacing:".02em"}}>
+                      style={{fontFamily:"'DM Mono',monospace",opacity:.45,letterSpacing:".02em"}}>
                       {l}
                     </text>
                   ))}
@@ -405,31 +486,29 @@ function App() {
         </div>
 
         {/* DETAIL PANEL */}
-        <div style={{flex:1,minWidth:260,overflowY:"auto",padding:"16px 18px",
-          display:"flex",flexDirection:"column",gap:10}}>
+        <div style={{flex:1,minWidth:270,overflowY:"auto",padding:"20px 22px",display:"flex",flexDirection:"column",gap:14}}>
 
           {!node ? (
             <div>
-              <p style={{fontSize:11,color:"#444",fontStyle:"italic",lineHeight:1.7,
-                marginBottom:16,fontFamily:sans}}>
+              <p style={{fontSize:12,color:"#bbb",fontStyle:"italic",lineHeight:1.75,marginBottom:20}}>
                 Selecciona un nodo para ver proteínas desreguladas, logFC, p-valores y nexo con el alcohol.
               </p>
-              <p style={{fontSize:9,color:"#333",fontFamily:mono,letterSpacing:".14em",
-                textTransform:"uppercase",marginBottom:10}}>Vías del mapa</p>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+              <p style={{fontSize:9,color:"#ccc",fontFamily:"'DM Mono',monospace",letterSpacing:".14em",textTransform:"uppercase",marginBottom:12}}>
+                Vías del mapa
+              </p>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
                 {Object.values(NODES).map(n=>(
-                  <div key={n.id} className="nc"
-                    style={{background:`${n.color}10`,borderColor:`${n.color}40`}}
+                  <div key={n.id} className="nc" style={{borderColor:`${n.color}35`}}
                     onClick={()=>{setSel(n.id);setTab("males");setShowAlc(false);}}
-                    onMouseEnter={e=>e.currentTarget.style.background=`${n.color}20`}
-                    onMouseLeave={e=>e.currentTarget.style.background=`${n.color}10`}>
-                    <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
-                      <div style={{width:7,height:7,borderRadius:"50%",background:n.color,flexShrink:0}}/>
-                      <span style={{fontSize:10,color:n.color,fontWeight:600,fontFamily:mono}}>
+                    onMouseEnter={e=>{ e.currentTarget.style.background=`${n.color}0C`; e.currentTarget.style.borderColor=n.color+"60"; }}
+                    onMouseLeave={e=>{ e.currentTarget.style.background="#fafafa"; e.currentTarget.style.borderColor=`${n.color}35`; }}>
+                    <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:4}}>
+                      <div style={{width:9,height:9,borderRadius:"50%",background:n.color,flexShrink:0}}/>
+                      <span style={{fontSize:11,color:n.color,fontWeight:700,fontFamily:"'Syne',sans-serif"}}>
                         {n.label.join(" ")}
                       </span>
                     </div>
-                    <p style={{margin:0,fontSize:10,color:"#555",lineHeight:1.4,fontFamily:sans}}>
+                    <p style={{margin:0,fontSize:10,color:"#999",lineHeight:1.45}}>
                       {n.desc.slice(0,72)}…
                     </p>
                   </div>
@@ -438,21 +517,19 @@ function App() {
             </div>
           ) : (
             <>
-              <div style={{display:"flex",alignItems:"flex-start",gap:10,paddingBottom:10,
-                borderBottom:"1px solid #151620"}}>
-                <div style={{width:8,height:8,borderRadius:"50%",background:node.color,
-                  marginTop:4,flexShrink:0}}/>
-                <div>
-                  <h2 style={{margin:"0 0 4px",fontSize:14,color:node.color,fontWeight:600,fontFamily:mono}}>
+              <div style={{paddingBottom:14,borderBottom:"1.5px solid #f0f0f0"}}>
+                <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:6}}>
+                  <div style={{width:11,height:11,borderRadius:"50%",background:node.color,flexShrink:0}}/>
+                  <h2 style={{margin:0,fontSize:17,color:node.color,fontWeight:800,fontFamily:"'Syne',sans-serif"}}>
                     {node.label.join(" ")}
                   </h2>
-                  <p style={{margin:0,fontSize:11,color:"#666",lineHeight:1.5,fontFamily:sans}}>
-                    {node.desc}
-                  </p>
                 </div>
+                <p style={{margin:0,fontSize:12,color:"#888",lineHeight:1.6}}>
+                  {node.desc}
+                </p>
               </div>
 
-              <div style={{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}>
+              <div style={{display:"flex",gap:7,alignItems:"center",flexWrap:"wrap"}}>
                 <button className={`tb ${tab==="males"?"on":""}`} onClick={()=>setTab("males")}>
                   ♂ Machos ({node.males.length})
                 </button>
@@ -471,64 +548,66 @@ function App() {
                 ))}
               </div>
 
-              {showAlc&&(
-                <div style={{background:"#161208",border:`1px solid ${node.color}44`,
-                  borderRadius:3,padding:"11px 13px"}}>
-                  <p style={{margin:"0 0 6px",fontSize:9,color:node.color,fontFamily:mono,
-                    letterSpacing:".12em",textTransform:"uppercase"}}>Nexo con alcohol</p>
-                  <p style={{margin:0,fontSize:11,color:"#888",lineHeight:1.7,fontFamily:sans}}>
-                    {node.alcohol}
-                  </p>
-                </div>
-              )}
-
               <div>
-                <p style={{margin:"0 0 7px",fontSize:9,color:"#333",fontFamily:mono,
-                  letterSpacing:".12em",textTransform:"uppercase"}}>Vías conectadas</p>
+                <p style={{margin:"0 0 9px",fontSize:9,color:"#ccc",fontFamily:"'DM Mono',monospace",letterSpacing:".12em",textTransform:"uppercase"}}>
+                  Vías conectadas
+                </p>
                 {EDGES.filter(e=>e.from===sel||e.to===sel).map((e,i)=>{
                   const otherId=e.from===sel?e.to:e.from;
                   const other=NODES[otherId];
                   const dir=e.from===sel?"→":"←";
                   return (
-                    <div key={i} style={{display:"flex",alignItems:"center",gap:7,
-                      marginBottom:5,cursor:"pointer"}}
+                    <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:7,cursor:"pointer"}}
                       onClick={()=>{setSel(otherId);setTab("males");setShowAlc(false);}}>
-                      <div style={{width:6,height:6,borderRadius:"50%",
-                        background:e.color,flexShrink:0}}/>
-                      <span style={{fontSize:11,color:e.color,fontFamily:mono}}>{dir}</span>
-                      <span style={{fontSize:12,color:other.color,fontWeight:600,fontFamily:mono}}>
-                        {other.label.join(" ")}
-                      </span>
-                      <span style={{fontSize:10,color:"#555",fontFamily:sans}}>· {e.label}</span>
+                      <div style={{width:7,height:7,borderRadius:"50%",background:e.color,flexShrink:0}}/>
+                      <span style={{fontSize:12,color:e.color,fontFamily:"'DM Mono',monospace",fontWeight:600}}>{dir}</span>
+                      <span style={{fontSize:13,color:other.color,fontWeight:700,fontFamily:"'Syne',sans-serif"}}>{other.label.join(" ")}</span>
+                      <span style={{fontSize:11,color:"#bbb"}}>· {e.label}</span>
                     </div>
                   );
                 })}
               </div>
 
-              <button onClick={()=>setSel(null)}
-                style={{alignSelf:"flex-start",background:"transparent",
-                  border:"1px solid #2a2b3a",color:"#555",padding:"5px 12px",
-                  cursor:"pointer",fontFamily:mono,fontSize:10,
-                  borderRadius:2,letterSpacing:".07em"}}>
-                ← Volver
+              <button onClick={()=>{setSel(null);setShowAlc(false);}}
+                style={{
+                  alignSelf:"flex-start", background:"#fff",
+                  border:"2px solid #e0e0e0", color:"#444",
+                  padding:"12px 32px", cursor:"pointer",
+                  fontFamily:"'Syne',sans-serif", fontSize:14, fontWeight:700,
+                  borderRadius:8, letterSpacing:".01em", marginTop:4,
+                  transition:"all .15s",
+                }}
+                onMouseEnter={e=>{e.target.style.background="#f5f5f5";e.target.style.borderColor="#bbb";}}
+                onMouseLeave={e=>{e.target.style.background="#fff";e.target.style.borderColor="#e0e0e0";}}
+              >
+                ← Volver al mapa
               </button>
             </>
           )}
         </div>
       </div>
 
-      {/* FOOTER */}
-      <div style={{borderTop:"1px solid #151620",padding:"5px 22px",display:"flex",
-        gap:18,alignItems:"center",flexShrink:0}}>
-        <span style={{fontSize:9,color:"#333",fontFamily:mono}}>
-          <span style={{color:"#30e87880"}}>↑</span> sobreexpresado &nbsp;·&nbsp;
-          <span style={{color:"#ff505080"}}>↓</span> infraexpresado &nbsp;·&nbsp;
-          <span style={{color:"#66666660"}}>~</span> fosfoproteómica
-        </span>
-        <span style={{marginLeft:"auto",fontSize:9,color:"#333",fontFamily:mono}}>
+      {/* ── FOOTER / LEGEND ──────────────────────────────────────────────── */}
+      <div style={{
+        borderTop:"1.5px solid #f0f0f0", padding:"10px 28px",
+        display:"flex", gap:24, alignItems:"center", flexShrink:0, background:"#fff",
+      }}>
+        {[
+          {dir:"↑", label:"sobreexpresado", color:"#0F9E55"},
+          {dir:"↓", label:"infraexpresado",  color:"#D41A42"},
+          {dir:"~", label:"fosfoproteómica", color:"#aaa"},
+        ].map(({dir,label,color})=>(
+          <div key={dir} style={{display:"flex",alignItems:"center",gap:7}}>
+            <span style={{fontSize:16,fontWeight:700,color,fontFamily:"'DM Mono',monospace",lineHeight:1}}>{dir}</span>
+            <span style={{fontSize:11,color:"#aaa",fontFamily:"'DM Sans',sans-serif"}}>{label}</span>
+          </div>
+        ))}
+        <span style={{marginLeft:"auto",fontSize:10,color:"#ccc",fontFamily:"'DM Mono',monospace",letterSpacing:".06em"}}>
           clic en nodo → detalle · clic de nuevo → deseleccionar
         </span>
       </div>
+
+      {showAlc && node && <AlcoholModal node={node} onClose={()=>setShowAlc(false)}/>}
     </div>
   );
 }
