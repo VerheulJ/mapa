@@ -7,14 +7,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: #0d0e14; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #1e2030; border-radius: 2px; }
+    html, body { height: 100%; background: #0e0f16; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #252636; border-radius: 3px; }
   </style>
 </head>
 <body>
@@ -22,20 +20,21 @@
 <script type="text/babel">
 const { useState } = React;
 
+/* Colores: saturación media, luminosidad media — visibles sobre fondo oscuro */
 const C = {
-  glutGABA:     "#b06848",
-  calcium:      "#4a7aaa",
-  vesicles:     "#6a5a9a",
-  cytoskeleton: "#3a8a5a",
-  mitochondria: "#9a7a2a",
-  oxphos:       "#9a3a4a",
-  ribosomes:    "#3a8a8a",
+  glutGABA:     "#d4784a",   /* terracota */
+  calcium:      "#5a8ec8",   /* azul acero */
+  vesicles:     "#8870c8",   /* violeta */
+  cytoskeleton: "#4aaa6a",   /* verde */
+  mitochondria: "#c89a2a",   /* ámbar */
+  oxphos:       "#c04460",   /* granate */
+  ribosomes:    "#3aaeae",   /* teal */
 };
 
 const NODES = {
   glutGABA: {
     id:"glutGABA", abbr:"Glu / GABA", label:["Glutamato","& GABA"],
-    color:C.glutGABA, cx:420, cy:130,
+    color:C.glutGABA, cx:430, cy:135,
     desc:"Eje central de la disrupción neurobiológica por alcohol. Mecanísticamente aguas arriba de la mayoría de los demás cambios proteómicos. Correlaciona con los déficits conductuales del modelo.",
     males:[
       {gene:"GLS",              dir:"↑", logFC:null,  pval:null,  note:"Gln→Glu; desvío hacia catabolismo energético"},
@@ -63,11 +62,11 @@ const NODES = {
       {gene:"KCNJ3 (GIRK1)", dir:"↓", logFC:-0.86, pval:0.045, note:"Canal K⁺ GABA-B reducido"},
       {gene:"NTRK2 (TrkB)",  dir:"↓", logFC:null,  pval:null,  note:"Receptor BDNF; señalización neurotrófica ↓"},
     ],
-    alcohol:"El alcohol potencia GABA e inhibe NMDA agudamente. La desregulación crónica es adaptación compensatoria: en machos el glutamato se desvía al catabolismo energético (circuito metabólicamente agotado + feedback inhibitorio colapsado → déficit de memoria); en hembras el sistema NMDA se potencia estructuralmente, generando un patrón compatible con vigilancia aumentada más que con daño de circuito."
+    alcohol:"El alcohol potencia GABA e inhibe NMDA agudamente. La desregulación crónica es adaptación compensatoria: en machos el glutamato se desvía al catabolismo energético (circuito agotado + feedback colapsado → déficit de memoria); en hembras el sistema NMDA se potencia estructuralmente, generando un patrón compatible con vigilancia aumentada más que con daño de circuito."
   },
   calcium: {
     id:"calcium", abbr:"Ca²⁺", label:["Señalización","Ca²⁺"],
-    color:C.calcium, cx:700, cy:80,
+    color:C.calcium, cx:715, cy:85,
     desc:"Ajustes sex-específicos en canales de calcio y sensores intracelulares. Consecuencias en plasticidad sináptica, citoesqueleto y función mitocondrial.",
     males:[
       {gene:"CACNA2D3", dir:"↓", logFC:-1.07, pval:0.023, note:"Subunidad canal Ca²⁺ tipo-L"},
@@ -83,18 +82,17 @@ const NODES = {
       {gene:"PPP2R5B", dir:"↑", logFC:0.39,  pval:0.035, note:"Regulación fosfatasa mediada Ca²⁺"},
       {gene:"HPCAL4",  dir:"↓", logFC:-0.73, pval:0.003, note:"Sensor Ca²⁺ hippocalcina; actividad alterada"},
     ],
-    alcohol:"El alcohol altera canales de Ca²⁺ voltaje-dependientes y homeostasis intracelular. Machos reducen influx extracelular (↓ CACNA2D3/1A/2D1); hembras reajustan el manejo mitocondrial (↑ MICU1). La divergencia en PPP2R5B (↓ machos, ↑ hembras) apunta a regulación opuesta de fosfatasas Ca²⁺-responsivas."
+    alcohol:"El alcohol altera canales de Ca²⁺ voltaje-dependientes y homeostasis intracelular. Machos reducen influx extracelular (↓ CACNA); hembras reajustan el manejo mitocondrial (↑ MICU1). Divergencia en PPP2R5B (↓ machos, ↑ hembras): regulación opuesta de fosfatasas Ca²⁺-responsivas."
   },
   vesicles: {
     id:"vesicles", abbr:"Vesículas", label:["Tráfico","Vesicular"],
-    color:C.vesicles, cx:700, cy:320,
+    color:C.vesicles, cx:715, cy:325,
     desc:"Alteraciones en exocitosis, reciclaje y endocitosis sináptica. Machos: potenciación exocitótica compensatoria; hembras: remodelación endocítica con posibles signos de envejecimiento prematuro.",
     males:[
       {gene:"SYT1",             dir:"↑", logFC:0.34,  pval:0.044, note:"Sinaptotagmina; exocitosis Ca²⁺-disparada"},
       {gene:"CPLX2",            dir:"↑", logFC:null,  pval:null,  note:"Complexina; fusión vesicular"},
       {gene:"DNM1L",            dir:"↑", logFC:0.51,  pval:0.030, note:"Reciclaje sináptico"},
       {gene:"VGLUT2 (SLC17A6)",dir:"↑", logFC:0.70,  pval:0.010, note:"Transportador Glu vesicular"},
-      {gene:"GAT-3 (SLC6A11)", dir:"↑", logFC:1.41,  pval:0.014, note:"Transportador GABA"},
       {gene:"CLTA",             dir:"↑", logFC:0.36,  pval:0.045, note:"Clatrina; endocitosis mediada"},
       {gene:"RABEP1",           dir:"↑", logFC:0.35,  pval:0.035, note:"Efector Rab5; maduración endosoma"},
       {gene:"SH3GL1",           dir:"↑", logFC:0.40,  pval:0.016, note:"Curvatura membrana; inicio endocitosis"},
@@ -114,11 +112,11 @@ const NODES = {
       {gene:"EPN1",     dir:"↓", logFC:-0.44, pval:0.028, note:"Epsina; formación vesicular clatrina ↓"},
       {gene:"KIF5A",    dir:"↓", logFC:-0.64, pval:0.042, note:"Kinesina; transporte axonal anterógrado ↓"},
     ],
-    alcohol:"El alcohol perturba la liberación y reciclaje de neurotransmisores. En machos, ↑ SYT1/CPLX2 junto a ↓ canales Ca²⁺ refleja intento de mantener exocitosis pese a menor influx. En hembras, ↑ DNM1 puede reflejar envejecimiento prematuro asociado al consumo crónico."
+    alcohol:"El alcohol perturba liberación y reciclaje de neurotransmisores. En machos ↑ SYT1/CPLX2 refleja intento de mantener exocitosis pese a menor influx Ca²⁺. En hembras ↑ DNM1 puede reflejar envejecimiento prematuro asociado al consumo crónico."
   },
   cytoskeleton: {
     id:"cytoskeleton", abbr:"Citoeq.", label:["Remodelación","Citoesquelética"],
-    color:C.cytoskeleton, cx:140, cy:320,
+    color:C.cytoskeleton, cx:145, cy:325,
     desc:"Remodelación citoesquelética con estrategias mecánicamente distintas entre sexos. Relevante para regulación de tau y riesgo diferencial de demencia.",
     males:[
       {gene:"TMOD2",          dir:"↑", logFC:0.48,  pval:0.037, note:"Estabilización extremos actina"},
@@ -138,79 +136,78 @@ const NODES = {
       {gene:"ARPC1B",  dir:"↓", logFC:-0.46, pval:0.005, note:"Arp2/3; ↓ nucleación ramificada"},
       {gene:"TUBA4A",  dir:"↓", logFC:null,  pval:null,  note:"↓ poliglutamilación → neuroprotección; ↓ agregación tau"},
     ],
-    alcohol:"El alcohol altera morfología de espinas dendríticas y plasticidad sináptica crónica. La divergencia en tau (hipofosforilación machos / tendencia a hiperfosforilación hembras) es crítica para el riesgo diferencial de demencia relacionada con alcohol entre sexos."
+    alcohol:"El alcohol altera morfología de espinas dendríticas y plasticidad sináptica. La divergencia en tau (hipofosforilación machos / hiperfosforilación hembras) es crítica para el riesgo diferencial de demencia relacionada con alcohol entre sexos."
   },
   mitochondria: {
     id:"mitochondria", abbr:"Mitocond.", label:["Metabolismo","Mitocondrial"],
-    color:C.mitochondria, cx:140, cy:130,
+    color:C.mitochondria, cx:145, cy:135,
     desc:"Alteraciones metabólicas más extensas en machos. Cubre glucólisis, ciclo TCA, β-oxidación, cetogénesis y mielinización.",
     males:[
       {gene:"HK1",    dir:"↑", logFC:0.31,  pval:0.018, note:"Fosforilación inicial glucosa"},
       {gene:"GPI",    dir:"↑", logFC:null,  pval:null,  note:"G6P → F6P (glucólisis)"},
       {gene:"PFKL",   dir:"↓", logFC:-0.43, pval:0.027, note:"Enzima limitante glucólisis → desvío Glu"},
-      {gene:"IDH3A",  dir:"↑", logFC:null,  pval:null,  note:"Isocitrato → α-cetoglutarato (TCA acelerado)"},
-      {gene:"MDH2",   dir:"↑", logFC:0.53,  pval:0.024, note:"Malato → oxaloacetato; homeostasis TCA"},
+      {gene:"IDH3A",  dir:"↑", logFC:null,  pval:null,  note:"TCA acelerado"},
+      {gene:"MDH2",   dir:"↑", logFC:0.53,  pval:0.024, note:"Homeostasis TCA"},
       {gene:"SDHB",   dir:"↓", logFC:-0.29, pval:0.002, note:"Complejo II; acumulación succinato"},
       {gene:"ECH1",   dir:"↑", logFC:null,  pval:null,  note:"β-oxidación ácidos grasos"},
-      {gene:"HMGCS2", dir:"↑", logFC:null,  pval:null,  note:"HMG-CoA sintasa; cetogénesis / mevalonato"},
-      {gene:"FDPS",   dir:"↑", logFC:0.33,  pval:0.030, note:"Ruta mevalonato → colesterol/prenilación → mielina"},
+      {gene:"HMGCS2", dir:"↑", logFC:null,  pval:null,  note:"Cetogénesis / mevalonato"},
+      {gene:"FDPS",   dir:"↑", logFC:0.33,  pval:0.030, note:"Ruta mevalonato → colesterol → mielina"},
     ],
     females:[
-      {gene:"PGAM1",    dir:"↓", logFC:null,  pval:null,  note:"Bloqueo selectivo glucólisis"},
-      {gene:"PDHB",     dir:"↓", logFC:null,  pval:null,  note:"Piruvato → Acetil-CoA limitado; ↓ entrada TCA"},
-      {gene:"ACACA",    dir:"↑", logFC:0.24,  pval:0.032, note:"Lipogénesis de novo; ¿restauración mielina?"},
-      {gene:"HMGCS2",   dir:"↑", logFC:0.40,  pval:0.015, note:"Cetogénesis"},
-      {gene:"HMGCL",    dir:"↑", logFC:null,  pval:null,  note:"HMG-CoA → acetoacetato"},
-      {gene:"ECH1",     dir:"↓", logFC:null,  pval:null,  note:"β-oxidación ↓"},
-      {gene:"BDH1",     dir:"↓", logFC:-0.30, pval:0.004, note:"β-HB sintasa ↓ → acetoacetato → GPR43-BDNF"},
-      {gene:"CRAT",     dir:"↑", logFC:0.36,  pval:0.016, note:"Lanzadera acetil-CoA mitocondrial"},
-      {gene:"MAPK8IP3", dir:"↓", logFC:-0.26, pval:0.00005,note:"GPR43-pERK downstream"},
+      {gene:"PGAM1",    dir:"↓", logFC:null,  pval:null,    note:"Bloqueo selectivo glucólisis"},
+      {gene:"PDHB",     dir:"↓", logFC:null,  pval:null,    note:"Piruvato → Acetil-CoA limitado; ↓ TCA"},
+      {gene:"ACACA",    dir:"↑", logFC:0.24,  pval:0.032,   note:"Lipogénesis de novo; ¿restauración mielina?"},
+      {gene:"HMGCS2",   dir:"↑", logFC:0.40,  pval:0.015,   note:"Cetogénesis"},
+      {gene:"HMGCL",    dir:"↑", logFC:null,  pval:null,    note:"HMG-CoA → acetoacetato"},
+      {gene:"BDH1",     dir:"↓", logFC:-0.30, pval:0.004,   note:"β-HB sintasa ↓ → acetoacetato → GPR43-BDNF"},
+      {gene:"CRAT",     dir:"↑", logFC:0.36,  pval:0.016,   note:"Lanzadera acetil-CoA mitocondrial"},
+      {gene:"MAPK8IP3", dir:"↓", logFC:-0.26, pval:0.00005, note:"GPR43-pERK downstream"},
     ],
     alcohol:"El alcohol genera exceso NADH y acetaldehído que perturban el metabolismo cerebral. En machos: PFKL↓ desvía F6P a hexosaminas → Glu extra (nexo Glu/GABA). En hembras: ↓ PDHB favorece cetogénesis; acetoacetato puede modular GPR43→BDNF (neuroprotección potencial)."
   },
   oxphos: {
     id:"oxphos", abbr:"OXPHOS", label:["Fosforilación","Oxidativa"],
-    color:C.oxphos, cx:420, cy:470,
+    color:C.oxphos, cx:430, cy:480,
     desc:"Remodelación de subunidades de complejos I–V. Más extensa en hembras. Consecuencia aguas abajo de Ca²⁺ y metabolismo mitocondrial.",
     males:[
-      {gene:"NDUFS4", dir:"↑", logFC:null,  pval:null,  note:"Complejo I; estabilización estructural brazo hidrofílico"},
-      {gene:"NDUFS6", dir:"↑", logFC:0.96,  pval:0.027, note:"Complejo I; estabilización estructural"},
+      {gene:"NDUFS4", dir:"↑", logFC:null,  pval:null,  note:"Complejo I; estabilización estructural"},
+      {gene:"NDUFS6", dir:"↑", logFC:0.96,  pval:0.027, note:"Complejo I"},
       {gene:"NDUFA5", dir:"↑", logFC:0.46,  pval:0.027, note:"Complejo I; brazo hidrofílico accesorio"},
       {gene:"SDHB",   dir:"↓", logFC:-0.29, pval:0.003, note:"Complejo II"},
       {gene:"COX4I1", dir:"↓", logFC:null,  pval:null,  note:"Complejo IV; overlap Alzheimer"},
-      {gene:"COX5A",  dir:"↓", logFC:-0.29, pval:0.010, note:"Complejo IV; eficiencia ↓; overlap Alzheimer"},
-      {gene:"MT-CO2", dir:"↓", logFC:-0.69, pval:0.028, note:"Complejo IV; subunidad catalítica mitocondrial"},
+      {gene:"COX5A",  dir:"↓", logFC:-0.29, pval:0.010, note:"Complejo IV; overlap Alzheimer"},
+      {gene:"MT-CO2", dir:"↓", logFC:-0.69, pval:0.028, note:"Complejo IV; subunidad catalítica"},
       {gene:"COX5B",  dir:"↑", logFC:0.77,  pval:0.045, note:"Complejo IV; reestructuración compensatoria"},
-      {gene:"ATP5IF1",dir:"↑", logFC:null,  pval:null,  note:"ATP sintasa; +168% vs control; inhibe hidrólisis reversa"},
+      {gene:"ATP5IF1",dir:"↑", logFC:null,  pval:null,  note:"ATP sintasa; +168% vs control"},
       {gene:"ATP5PF", dir:"↑", logFC:0.55,  pval:0.037, note:"ATP sintasa; tallo periférico F₁-F₀"},
       {gene:"ATP5PD", dir:"↑", logFC:0.34,  pval:0.023, note:"ATP sintasa; tallo periférico"},
     ],
     females:[
-      {gene:"NDUFS4",  dir:"↑", logFC:null, pval:null,  note:"Complejo I; estructural (compartido con machos)"},
-      {gene:"NDUFS2",  dir:"↑", logFC:null, pval:null,  note:"Complejo I; subunidad central; centros Fe-S"},
-      {gene:"NDUFV3",  dir:"↑", logFC:null, pval:null,  note:"Complejo I; regulación fina actividad catalítica"},
-      {gene:"NDUFV2",  dir:"↓", logFC:null, pval:null,  note:"Complejo I; flavoproteína; oxidación NADH"},
-      {gene:"NDUFA11", dir:"↓", logFC:null, pval:null,  note:"Complejo I; brazo hidrófobo; supercomplejo"},
-      {gene:"UQCRC1",  dir:"↑", logFC:0.29, pval:0.022, note:"Complejo III; modulación flujo electrones"},
-      {gene:"UQCRQ",   dir:"↑", logFC:0.23, pval:"7.3e-5",note:"Complejo III; señal estadística consistente"},
-      {gene:"COX5A",   dir:"↑", logFC:null, pval:null,  note:"Complejo IV (opuesto a machos)"},
-      {gene:"ATP5F1D", dir:"↑", logFC:null, pval:null,  note:"ATP sintasa; dominio F₁"},
-      {gene:"ATP5F1E", dir:"↑", logFC:0.39, pval:0.019, note:"ATP sintasa; dominio F₁; actividad rotacional"},
+      {gene:"NDUFS4",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; estructural"},
+      {gene:"NDUFS2",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; centros Fe-S"},
+      {gene:"NDUFV3",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; regulación fina"},
+      {gene:"NDUFV2",  dir:"↓", logFC:null, pval:null,    note:"Complejo I; flavoproteína; oxidación NADH"},
+      {gene:"NDUFA11", dir:"↓", logFC:null, pval:null,    note:"Complejo I; supercomplejo respiratorio"},
+      {gene:"UQCRC1",  dir:"↑", logFC:0.29, pval:0.022,   note:"Complejo III; flujo electrones"},
+      {gene:"UQCRQ",   dir:"↑", logFC:0.23, pval:"7.3e-5",note:"Complejo III"},
+      {gene:"COX5A",   dir:"↑", logFC:null, pval:null,    note:"Complejo IV (opuesto a machos)"},
+      {gene:"ATP5F1D", dir:"↑", logFC:null, pval:null,    note:"ATP sintasa; dominio F₁"},
+      {gene:"ATP5F1E", dir:"↑", logFC:0.39, pval:0.019,   note:"ATP sintasa; actividad rotacional"},
     ],
-    alcohol:"En machos: patrón COX4I1/COX5A ↓ solapa con hallazgos en Alzheimer. ATP5IF1 +168% sugiere respuesta de emergencia. En hembras: restructuración más amplia del Complejo I (catalítico + estructural) indica adaptación más profunda a la disfunción mitocondrial inducida por alcohol."
+    alcohol:"En machos: patrón COX4I1/COX5A ↓ solapa con hallazgos en Alzheimer. ATP5IF1 +168% sugiere respuesta de emergencia. En hembras: restructuración más amplia del Complejo I indica adaptación más profunda a la disfunción mitocondrial inducida por alcohol."
   },
   ribosomes: {
     id:"ribosomes", abbr:"Ribos.", label:["Proteínas","Ribosomales"],
-    color:C.ribosomes, cx:140, cy:470,
+    color:C.ribosomes, cx:145, cy:480,
     desc:"Alteraciones traduccionales más pronunciadas en hembras. Refleja mayor demanda de síntesis proteica para sostener la extensa remodelación sináptica y citoesquelética.",
     males:[
-      {gene:"RPLP2", dir:"↑", logFC:null, pval:null, note:"60S; interacción factores de elongación"},
+      {gene:"RPLP2", dir:"↑", logFC:null, pval:null, note:"60S; factores de elongación"},
       {gene:"RPL29", dir:"↑", logFC:null, pval:null, note:"60S"},
       {gene:"RPS21", dir:"↑", logFC:null, pval:null, note:"40S"},
       {gene:"RPS12", dir:"↑", logFC:null, pval:null, note:"40S"},
     ],
     females:[
-      {gene:"RPS5",  dir:"↑", logFC:null, pval:null, note:"40S; reconocimiento mRNA, iniciación"},
+      {gene:"RPS5",  dir:"↑", logFC:null, pval:null, note:"40S; reconocimiento mRNA"},
       {gene:"RPS18", dir:"↑", logFC:null, pval:null, note:"40S; iniciación"},
       {gene:"RPS25", dir:"↑", logFC:null, pval:null, note:"40S; iniciación"},
       {gene:"RPS26", dir:"↑", logFC:null, pval:null, note:"40S; iniciación"},
@@ -223,26 +220,26 @@ const NODES = {
       {gene:"RPS19", dir:"↑", logFC:null, pval:null, note:"40S"},
       {gene:"RPS23", dir:"↑", logFC:null, pval:null, note:"40S"},
     ],
-    alcohol:"El aumento generalizado en proteínas ribosomales en hembras —subunidades 40S y 60S— refleja incremento compensatorio de capacidad traduccional para sostener la extensa remodelación de receptores NMDA, andamiajes postsinápticos y proteínas citoesqueléticas."
+    alcohol:"El aumento generalizado en proteínas ribosomales en hembras refleja incremento compensatorio de capacidad traduccional para sostener la extensa remodelación de receptores NMDA, andamiajes postsinápticos y proteínas citoesqueléticas."
   }
 };
 
 const EDGES = [
-  {from:"glutGABA",    to:"calcium",       label:"NMDA → Ca²⁺",           color:"#6858a0"},
-  {from:"calcium",     to:"vesicles",      label:"exocitosis Ca²⁺",        color:"#3868a0"},
-  {from:"calcium",     to:"cytoskeleton",  label:"GSN Ca²⁺-dep.",          color:"#387860"},
-  {from:"glutGABA",    to:"mitochondria",  label:"Glu → catabolismo",      color:"#986828"},
-  {from:"mitochondria",to:"oxphos",        label:"TCA → OXPHOS",           color:"#883848"},
-  {from:"vesicles",    to:"oxphos",        label:"demanda ATP",             color:"#584888"},
-  {from:"cytoskeleton",to:"vesicles",      label:"actina endocítica",       color:"#287868"},
-  {from:"oxphos",      to:"ribosomes",     label:"ATP → traducción",        color:"#985828"},
-  {from:"ribosomes",   to:"cytoskeleton",  label:"proteínas estructurales", color:"#187878"},
-  {from:"glutGABA",    to:"vesicles",      label:"reciclaje NT",            color:"#983838"},
-  {from:"mitochondria",to:"cytoskeleton",  label:"tau / energía",           color:"#487848"},
+  {from:"glutGABA",    to:"calcium",       label:"NMDA → Ca²⁺",           color:"#8870c0"},
+  {from:"calcium",     to:"vesicles",      label:"exocitosis Ca²⁺",        color:"#4878b8"},
+  {from:"calcium",     to:"cytoskeleton",  label:"GSN Ca²⁺-dep.",          color:"#3a9860"},
+  {from:"glutGABA",    to:"mitochondria",  label:"Glu → catabolismo",      color:"#c08828"},
+  {from:"mitochondria",to:"oxphos",        label:"TCA → OXPHOS",           color:"#b03858"},
+  {from:"vesicles",    to:"oxphos",        label:"demanda ATP",             color:"#6858a8"},
+  {from:"cytoskeleton",to:"vesicles",      label:"actina endocítica",       color:"#2a9888"},
+  {from:"oxphos",      to:"ribosomes",     label:"ATP → traducción",        color:"#b07030"},
+  {from:"ribosomes",   to:"cytoskeleton",  label:"proteínas estructurales", color:"#2898a8"},
+  {from:"glutGABA",    to:"vesicles",      label:"reciclaje NT",            color:"#c04848"},
+  {from:"mitochondria",to:"cytoskeleton",  label:"tau / energía",           color:"#48a858"},
 ];
 
-const R = 50;
-const VW = 860, VH = 570;
+const R = 52;
+const VW = 880, VH = 580;
 
 function edgePts(a, b) {
   const dx=b.cx-a.cx, dy=b.cy-a.cy, d=Math.sqrt(dx*dx+dy*dy);
@@ -251,24 +248,24 @@ function edgePts(a, b) {
 }
 
 function ProteinRow({p, nodeColor}) {
-  const dc = p.dir==="↑" ? "#5a9060" : p.dir==="↓" ? "#905050" : "#666";
+  const dc = p.dir==="↑" ? "#5aaa70" : p.dir==="↓" ? "#cc6060" : "#777";
   return (
     <div style={{display:"flex",gap:8,alignItems:"flex-start",
-      borderLeft:`2px solid ${nodeColor}45`,paddingLeft:8,
+      borderLeft:`2px solid ${nodeColor}60`,paddingLeft:8,
       paddingTop:4,paddingBottom:4,marginBottom:2}}>
-      <span style={{color:dc,fontWeight:600,fontSize:14,minWidth:14,flexShrink:0,
+      <span style={{color:dc,fontWeight:700,fontSize:14,minWidth:14,flexShrink:0,
         fontFamily:"'IBM Plex Mono',monospace"}}>{p.dir}</span>
       <div style={{flex:1,minWidth:0}}>
         <span style={{fontSize:12,fontWeight:600,color:nodeColor,
           fontFamily:"'IBM Plex Mono',monospace"}}>{p.gene}</span>
         {(p.logFC!==null||p.pval!==null) && (
-          <span style={{fontSize:10,color:"#3a3a4a",fontFamily:"'IBM Plex Mono',monospace",marginLeft:8}}>
+          <span style={{fontSize:10,color:"#4a4a5a",fontFamily:"'IBM Plex Mono',monospace",marginLeft:8}}>
             {p.logFC!==null?`logFC ${p.logFC>0?"+":""}${p.logFC}`:""}
             {p.logFC!==null&&p.pval!==null?" · ":""}
             {p.pval!==null?`p=${p.pval}`:""}
           </span>
         )}
-        <div style={{fontSize:11,color:"#585860",lineHeight:1.4,marginTop:1,
+        <div style={{fontSize:11,color:"#666",lineHeight:1.4,marginTop:1,
           fontFamily:"'IBM Plex Sans',sans-serif"}}>{p.note}</div>
       </div>
     </div>
@@ -289,37 +286,37 @@ function App() {
 
   return (
     <div style={{display:"flex",flexDirection:"column",height:"100vh",
-      background:"#0d0e14",color:"#c8c4bc",fontFamily:sans,overflow:"hidden"}}>
+      background:"#0e0f16",color:"#c8c5bc",fontFamily:sans,overflow:"hidden"}}>
 
       <style>{`
         *{box-sizing:border-box}
         ::-webkit-scrollbar{width:4px}
-        ::-webkit-scrollbar-thumb{background:#1a1b26;border-radius:2px}
+        ::-webkit-scrollbar-thumb{background:#202130;border-radius:2px}
         .nd{cursor:pointer;transition:opacity .15s}
-        .tb{cursor:pointer;border:1px solid #1e2030;background:transparent;color:#555;
+        .tb{cursor:pointer;border:1px solid #252636;background:transparent;color:#666;
             font-size:10px;padding:5px 14px;border-radius:2px;font-family:'IBM Plex Mono',monospace;
             letter-spacing:.07em;transition:all .15s}
-        .tb:hover{color:#aaa;border-color:#3a3a4e}
-        .tb.on{background:#111220;color:#c8c4bc;border-color:#3a3a4e}
-        .ab{cursor:pointer;border:1px solid #3a2e1860;background:transparent;color:#806820;
+        .tb:hover{color:#bbb;border-color:#444}
+        .tb.on{background:#141520;color:#c8c5bc;border-color:#444}
+        .ab{cursor:pointer;border:1px solid #c89a2a55;background:transparent;color:#a07820;
             font-size:10px;padding:5px 13px;border-radius:2px;font-family:'IBM Plex Mono',monospace;
             letter-spacing:.07em;text-transform:uppercase;transition:all .15s}
-        .ab:hover,.ab.on{background:#1e190808;border-color:#806820}
-        .nc{cursor:pointer;border:1px solid #14151f;border-radius:3px;padding:8px 10px;transition:background .12s}
-        @keyframes pulse{0%,100%{opacity:.3}50%{opacity:.65}}
+        .ab:hover,.ab.on{background:#c89a2a18;border-color:#c89a2a}
+        .nc{cursor:pointer;border:1px solid #1e1f2e;border-radius:3px;padding:8px 10px;transition:background .12s}
+        @keyframes pulse{0%,100%{opacity:.35}50%{opacity:.7}}
         .hub{animation:pulse 4s ease-in-out infinite}
       `}</style>
 
       {/* HEADER */}
-      <div style={{borderBottom:"1px solid #12131c",padding:"9px 20px",
+      <div style={{borderBottom:"1px solid #151620",padding:"9px 22px",
         display:"flex",alignItems:"center",gap:14,flexShrink:0}}>
-        <span style={{fontSize:9,color:"#22233a",fontFamily:mono,letterSpacing:".22em",textTransform:"uppercase"}}>
+        <span style={{fontSize:9,color:"#282938",fontFamily:mono,letterSpacing:".22em",textTransform:"uppercase"}}>
           Mapa Interactivo
         </span>
-        <h1 style={{margin:0,fontSize:13,fontWeight:500,color:"#c8c4bc",letterSpacing:".02em",fontFamily:sans}}>
+        <h1 style={{margin:0,fontSize:14,fontWeight:500,color:"#d4d0c8",fontFamily:sans}}>
           Desregulación Proteómica · Alcohol · Hipocampo
         </h1>
-        <span style={{marginLeft:"auto",fontSize:9,color:"#22233a",fontFamily:mono}}>
+        <span style={{marginLeft:"auto",fontSize:9,color:"#282938",fontFamily:mono}}>
           7 vías · 11 conexiones · dimorfismo sexual
         </span>
       </div>
@@ -329,19 +326,18 @@ function App() {
 
         {/* MAP */}
         <div style={{flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",
-          padding:"10px 6px 10px 10px",borderRight:"1px solid #12131c",overflowX:"auto"}}>
-          <svg viewBox={`0 0 ${VW} ${VH}`} width={VW} height={VH}
-            style={{display:"block"}}>
+          padding:"10px 8px 10px 12px",borderRight:"1px solid #151620",overflowX:"auto"}}>
+          <svg viewBox={`0 0 ${VW} ${VH}`} width={VW} height={VH} style={{display:"block"}}>
             <defs>
               {EDGES.map((e,i)=>(
-                <marker key={i} id={`a${i}`} markerWidth="6" markerHeight="6" refX="5" refY="2.5" orient="auto">
-                  <path d="M0,0L0,5L6,2.5z" fill={e.color} opacity=".65"/>
+                <marker key={i} id={`a${i}`} markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
+                  <path d="M0,0L0,5L7,2.5z" fill={e.color} opacity=".75"/>
                 </marker>
               ))}
               {Object.values(NODES).map(n=>(
                 <radialGradient key={n.id} id={`g${n.id}`} cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor={n.color} stopOpacity=".14"/>
-                  <stop offset="100%" stopColor={n.color} stopOpacity=".02"/>
+                  <stop offset="0%" stopColor={n.color} stopOpacity=".22"/>
+                  <stop offset="100%" stopColor={n.color} stopOpacity=".04"/>
                 </radialGradient>
               ))}
             </defs>
@@ -353,14 +349,14 @@ function App() {
               const active=activeEdges.includes(e);
               const dim=sel&&!active;
               return (
-                <g key={i} opacity={dim?.07:active?.8:.22}>
+                <g key={i} opacity={dim?.07:active?.9:.30}>
                   <line x1={p.x1} y1={p.y1} x2={p.x2} y2={p.y2}
-                    stroke={e.color} strokeWidth={active?1.6:.9}
+                    stroke={e.color} strokeWidth={active?2:1.2}
                     strokeDasharray={active?"none":"5,4"}
                     markerEnd={`url(#a${i})`}/>
                   {active&&(
-                    <text x={p.mx} y={p.my-7} textAnchor="middle" fontSize="8"
-                      fill={e.color} style={{fontFamily:mono,opacity:.8}}>
+                    <text x={p.mx} y={p.my-7} textAnchor="middle" fontSize="9"
+                      fill={e.color} style={{fontFamily:mono,opacity:.9}}>
                       {e.label}
                     </text>
                   )}
@@ -368,14 +364,14 @@ function App() {
               );
             })}
 
-            {/* Alcohol hub — typographic, no emoji */}
+            {/* Alcohol hub */}
             <g className="hub">
-              <circle cx={420} cy={305} r={32} fill="none"
-                stroke="#5a4a28" strokeWidth="1" strokeDasharray="3,4"/>
-              <text x={420} y={301} textAnchor="middle" fontSize="9"
-                fill="#6a5a30" style={{fontFamily:mono,letterSpacing:".16em"}}>EtOH</text>
-              <text x={420} y={315} textAnchor="middle" fontSize="7.5"
-                fill="#4a3a20" style={{fontFamily:mono,letterSpacing:".1em"}}>ALCOHOL</text>
+              <circle cx={430} cy={310} r={34} fill="none"
+                stroke="#8a7040" strokeWidth="1" strokeDasharray="3,4"/>
+              <text x={430} y={305} textAnchor="middle" fontSize="9.5"
+                fill="#9a8040" style={{fontFamily:mono,letterSpacing:".16em"}}>EtOH</text>
+              <text x={430} y={320} textAnchor="middle" fontSize="8"
+                fill="#6a5828" style={{fontFamily:mono,letterSpacing:".1em"}}>ALCOHOL</text>
             </g>
 
             {/* Nodes */}
@@ -383,24 +379,23 @@ function App() {
               const isSel=sel===n.id;
               const dim=sel&&!connected.has(n.id);
               return (
-                <g key={n.id} className="nd" opacity={dim?.16:1}
+                <g key={n.id} className="nd" opacity={dim?.18:1}
                   onClick={()=>{setSel(sel===n.id?null:n.id);setTab("males");setShowAlc(false);}}>
                   {isSel&&<circle cx={n.cx} cy={n.cy} r={R+12} fill="none"
-                    stroke={n.color} strokeWidth="1" opacity=".3"/>}
+                    stroke={n.color} strokeWidth="1.5" opacity=".4"/>}
                   <circle cx={n.cx} cy={n.cy} r={R} fill={`url(#g${n.id})`}/>
                   <circle cx={n.cx} cy={n.cy} r={R} fill="none"
-                    stroke={n.color} strokeWidth={isSel?1.6:1}
-                    strokeOpacity={isSel?.85:.38}/>
+                    stroke={n.color} strokeWidth={isSel?2:1.4}
+                    strokeOpacity={isSel?1:.65}/>
                   <text x={n.cx} y={n.cy-8}
-                    textAnchor="middle" fontSize="10.5" fill={n.color}
-                    style={{fontFamily:mono,fontWeight:600,letterSpacing:".04em",opacity:.85}}>
+                    textAnchor="middle" fontSize="11" fill={n.color}
+                    style={{fontFamily:mono,fontWeight:600,letterSpacing:".04em"}}>
                     {n.abbr}
                   </text>
                   {n.label.map((l,li)=>(
-                    <text key={li} x={n.cx}
-                      y={n.cy+8+(li*11)}
-                      textAnchor="middle" fontSize="7.5" fill={n.color}
-                      style={{fontFamily:mono,opacity:.5,letterSpacing:".02em"}}>
+                    <text key={li} x={n.cx} y={n.cy+9+(li*12)}
+                      textAnchor="middle" fontSize="8" fill={n.color}
+                      style={{fontFamily:mono,opacity:.6,letterSpacing:".02em"}}>
                       {l}
                     </text>
                   ))}
@@ -416,27 +411,26 @@ function App() {
 
           {!node ? (
             <div>
-              <p style={{fontSize:11,color:"#383840",fontStyle:"italic",lineHeight:1.7,
+              <p style={{fontSize:11,color:"#3a3a48",fontStyle:"italic",lineHeight:1.7,
                 marginBottom:16,fontFamily:sans}}>
                 Selecciona un nodo para ver proteínas desreguladas, logFC, p-valores y nexo con el alcohol.
               </p>
-              <p style={{fontSize:9,color:"#22233a",fontFamily:mono,letterSpacing:".14em",
+              <p style={{fontSize:9,color:"#282938",fontFamily:mono,letterSpacing:".14em",
                 textTransform:"uppercase",marginBottom:10}}>Vías del mapa</p>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
                 {Object.values(NODES).map(n=>(
                   <div key={n.id} className="nc"
-                    style={{background:`${n.color}05`,borderColor:`${n.color}20`}}
+                    style={{background:`${n.color}08`,borderColor:`${n.color}30`}}
                     onClick={()=>{setSel(n.id);setTab("males");setShowAlc(false);}}
-                    onMouseEnter={e=>e.currentTarget.style.background=`${n.color}0e`}
-                    onMouseLeave={e=>e.currentTarget.style.background=`${n.color}05`}>
+                    onMouseEnter={e=>e.currentTarget.style.background=`${n.color}14`}
+                    onMouseLeave={e=>e.currentTarget.style.background=`${n.color}08`}>
                     <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
-                      <div style={{width:5,height:5,borderRadius:"50%",background:n.color,
-                        opacity:.65,flexShrink:0}}/>
+                      <div style={{width:6,height:6,borderRadius:"50%",background:n.color,flexShrink:0}}/>
                       <span style={{fontSize:10,color:n.color,fontWeight:600,fontFamily:mono}}>
                         {n.label.join(" ")}
                       </span>
                     </div>
-                    <p style={{margin:0,fontSize:10,color:"#303038",lineHeight:1.4,fontFamily:sans}}>
+                    <p style={{margin:0,fontSize:10,color:"#3a3a48",lineHeight:1.4,fontFamily:sans}}>
                       {n.desc.slice(0,72)}…
                     </p>
                   </div>
@@ -446,14 +440,14 @@ function App() {
           ) : (
             <>
               <div style={{display:"flex",alignItems:"flex-start",gap:10,paddingBottom:10,
-                borderBottom:"1px solid #12131c"}}>
-                <div style={{width:7,height:7,borderRadius:"50%",background:node.color,
-                  marginTop:5,flexShrink:0,opacity:.8}}/>
+                borderBottom:"1px solid #151620"}}>
+                <div style={{width:8,height:8,borderRadius:"50%",background:node.color,
+                  marginTop:4,flexShrink:0}}/>
                 <div>
-                  <h2 style={{margin:"0 0 4px",fontSize:13,color:node.color,fontWeight:600,fontFamily:mono}}>
+                  <h2 style={{margin:"0 0 4px",fontSize:14,color:node.color,fontWeight:600,fontFamily:mono}}>
                     {node.label.join(" ")}
                   </h2>
-                  <p style={{margin:0,fontSize:11,color:"#484850",lineHeight:1.5,fontFamily:sans}}>
+                  <p style={{margin:0,fontSize:11,color:"#555560",lineHeight:1.5,fontFamily:sans}}>
                     {node.desc}
                   </p>
                 </div>
@@ -479,18 +473,18 @@ function App() {
               </div>
 
               {showAlc&&(
-                <div style={{background:"#14110a",border:"1px solid #2a220e",
+                <div style={{background:"#161208",border:"1px solid #c89a2a30",
                   borderRadius:3,padding:"11px 13px"}}>
-                  <p style={{margin:"0 0 6px",fontSize:9,color:"#6a5820",fontFamily:mono,
+                  <p style={{margin:"0 0 6px",fontSize:9,color:"#a07820",fontFamily:mono,
                     letterSpacing:".12em",textTransform:"uppercase"}}>Nexo con alcohol</p>
-                  <p style={{margin:0,fontSize:11,color:"#6a6860",lineHeight:1.7,fontFamily:sans}}>
+                  <p style={{margin:0,fontSize:11,color:"#777",lineHeight:1.7,fontFamily:sans}}>
                     {node.alcohol}
                   </p>
                 </div>
               )}
 
               <div>
-                <p style={{margin:"0 0 7px",fontSize:9,color:"#22233a",fontFamily:mono,
+                <p style={{margin:"0 0 7px",fontSize:9,color:"#282938",fontFamily:mono,
                   letterSpacing:".12em",textTransform:"uppercase"}}>Vías conectadas</p>
                 {EDGES.filter(e=>e.from===sel||e.to===sel).map((e,i)=>{
                   const otherId=e.from===sel?e.to:e.from;
@@ -500,13 +494,13 @@ function App() {
                     <div key={i} style={{display:"flex",alignItems:"center",gap:7,
                       marginBottom:5,cursor:"pointer"}}
                       onClick={()=>{setSel(otherId);setTab("males");setShowAlc(false);}}>
-                      <div style={{width:5,height:5,borderRadius:"50%",
-                        background:e.color,flexShrink:0,opacity:.65}}/>
-                      <span style={{fontSize:11,color:e.color,fontFamily:mono,opacity:.7}}>{dir}</span>
-                      <span style={{fontSize:11,color:other.color,fontWeight:600,fontFamily:mono}}>
+                      <div style={{width:6,height:6,borderRadius:"50%",
+                        background:e.color,flexShrink:0}}/>
+                      <span style={{fontSize:11,color:e.color,fontFamily:mono}}>{dir}</span>
+                      <span style={{fontSize:12,color:other.color,fontWeight:600,fontFamily:mono}}>
                         {other.label.join(" ")}
                       </span>
-                      <span style={{fontSize:10,color:"#303038",fontFamily:sans}}>· {e.label}</span>
+                      <span style={{fontSize:10,color:"#3a3a48",fontFamily:sans}}>· {e.label}</span>
                     </div>
                   );
                 })}
@@ -514,7 +508,7 @@ function App() {
 
               <button onClick={()=>setSel(null)}
                 style={{alignSelf:"flex-start",background:"transparent",
-                  border:"1px solid #1a1b26",color:"#3a3a4a",padding:"5px 12px",
+                  border:"1px solid #252636",color:"#555",padding:"5px 12px",
                   cursor:"pointer",fontFamily:mono,fontSize:10,
                   borderRadius:2,letterSpacing:".07em"}}>
                 ← Volver
@@ -525,14 +519,14 @@ function App() {
       </div>
 
       {/* FOOTER */}
-      <div style={{borderTop:"1px solid #12131c",padding:"5px 20px",display:"flex",
+      <div style={{borderTop:"1px solid #151620",padding:"5px 22px",display:"flex",
         gap:18,alignItems:"center",flexShrink:0}}>
-        <span style={{fontSize:9,color:"#1a1b28",fontFamily:mono}}>
-          <span style={{color:"#5a905070"}}>↑</span> sobreexpresado &nbsp;·&nbsp;
-          <span style={{color:"#905050a0"}}>↓</span> infraexpresado &nbsp;·&nbsp;
-          <span style={{color:"#55555570"}}>~</span> fosfoproteómica
+        <span style={{fontSize:9,color:"#22233a",fontFamily:mono}}>
+          <span style={{color:"#5aaa7080"}}>↑</span> sobreexpresado &nbsp;·&nbsp;
+          <span style={{color:"#cc606080"}}>↓</span> infraexpresado &nbsp;·&nbsp;
+          <span style={{color:"#66666660"}}>~</span> fosfoproteómica
         </span>
-        <span style={{marginLeft:"auto",fontSize:9,color:"#1a1b28",fontFamily:mono}}>
+        <span style={{marginLeft:"auto",fontSize:9,color:"#22233a",fontFamily:mono}}>
           clic en nodo → detalle · clic de nuevo → deseleccionar
         </span>
       </div>
