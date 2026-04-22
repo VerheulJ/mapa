@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Desregulación Proteómica · Hipocampo</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: #ffffff; }
+    html, body { height: 100%; background: #fff; font-family: 'Roboto', sans-serif; }
     ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #e4e4e4; border-radius: 3px; }
   </style>
 </head>
 <body>
@@ -20,287 +20,339 @@
 <script type="text/babel">
 const { useState, useRef, useCallback } = React;
 
-/* ── UNIFIED PALETTE — all same saturation/brightness family ─────────────── */
 const C = {
-  glutGABA:     "#E84C1E",  /* vermillion   */
-  calcium:      "#1A6FD4",  /* cobalt       */
-  vesicles:     "#7B3FD4",  /* violet       */
-  cytoskeleton: "#0F9E55",  /* emerald      */
-  mitochondria: "#C98500",  /* amber        */
-  oxphos:       "#D41A42",  /* crimson      */
-  ribosomes:    "#0898A0",  /* teal         */
+  glutGABA:"#D94F27", calcium:"#1A6FD4", vesicles:"#7430C8",
+  cytoskeleton:"#0E9650", mitochondria:"#C47F00", oxphos:"#CC1840", ribosomes:"#0892A0",
 };
 
 const NODES = {
-  glutGABA: {
-    id:"glutGABA", abbr:"Glu / GABA", label:["Glutamato","& GABA"],
-    color:C.glutGABA, cx:430, cy:135,
+  glutGABA:{id:"glutGABA",abbr:"Glu / GABA",label:["Glutamato","& GABA"],color:C.glutGABA,cx:430,cy:135,
     desc:"Eje central de la disrupción neurobiológica por alcohol. Mecanísticamente aguas arriba de la mayoría de los demás cambios proteómicos.",
     males:[
-      {gene:"GLS",              dir:"↑", logFC:null,  pval:null,  note:"Gln→Glu; desvío hacia catabolismo energético"},
-      {gene:"GAD1",             dir:"↑", logFC:0.45,  pval:0.010, note:"Síntesis GABA"},
-      {gene:"GAD2",             dir:"↑", logFC:null,  pval:null,  note:"Síntesis GABA"},
-      {gene:"ALDH5A1",          dir:"↑", logFC:0.34,  pval:0.002, note:"Degradación GABA → semialdehído succínico"},
-      {gene:"VGLUT2 (SLC17A6)",dir:"↑", logFC:0.70,  pval:0.010, note:"Transporte vesicular Glu; compensatorio"},
-      {gene:"GABRA1",           dir:"↑", logFC:0.36,  pval:0.037, note:"Subunidad GABA-A"},
-      {gene:"GAT-3 (SLC6A11)", dir:"↑", logFC:1.40,  pval:0.014, note:"Reuptake GABA"},
-      {gene:"HOMER3",           dir:"↓", logFC:null,  pval:null,  note:"Andamiaje postsináptico"},
-      {gene:"PRKCD",            dir:"↓", logFC:-0.72, pval:0.014, note:"Señalización postsináptica"},
-      {gene:"KCNJ6 (GIRK2)",   dir:"↓", logFC:null,  pval:null,  note:"Canal K⁺ GABA-B; colapso feedback inhibitorio"},
-      {gene:"PLCL1",            dir:"↓", logFC:null,  pval:null,  note:"Señalización GABA-B"},
-      {gene:"PRKCB",            dir:"↓", logFC:null,  pval:null,  note:"PKC; modulación GABA-A"},
+      {gene:"GLS",dir:"↑",logFC:null,pval:null,note:"Gln→Glu; desvío hacia catabolismo energético"},
+      {gene:"GAD1",dir:"↑",logFC:0.45,pval:0.010,note:"Síntesis GABA"},
+      {gene:"GAD2",dir:"↑",logFC:null,pval:null,note:"Síntesis GABA"},
+      {gene:"ALDH5A1",dir:"↑",logFC:0.34,pval:0.002,note:"Degradación GABA → semialdehído succínico"},
+      {gene:"VGLUT2 (SLC17A6)",dir:"↑",logFC:0.70,pval:0.010,note:"Transporte vesicular Glu; compensatorio"},
+      {gene:"GABRA1",dir:"↑",logFC:0.36,pval:0.037,note:"Subunidad GABA-A"},
+      {gene:"GAT-3 (SLC6A11)",dir:"↑",logFC:1.40,pval:0.014,note:"Reuptake GABA"},
+      {gene:"HOMER3",dir:"↓",logFC:null,pval:null,note:"Andamiaje postsináptico"},
+      {gene:"PRKCD",dir:"↓",logFC:-0.72,pval:0.014,note:"Señalización postsináptica"},
+      {gene:"KCNJ6 (GIRK2)",dir:"↓",logFC:null,pval:null,note:"Canal K⁺ GABA-B; colapso feedback inhibitorio"},
+      {gene:"PLCL1",dir:"↓",logFC:null,pval:null,note:"Señalización GABA-B"},
+      {gene:"PRKCB",dir:"↓",logFC:null,pval:null,note:"PKC; modulación GABA-A"},
     ],
     females:[
-      {gene:"GRIN1",          dir:"↑", logFC:null,  pval:null,  note:"Subunidad NMDA; potenciación activa"},
-      {gene:"GRIN2A",         dir:"↑", logFC:1.57,  pval:0.041, note:"Subunidad NMDA"},
-      {gene:"DLGAP1",         dir:"↑", logFC:1.61,  pval:0.048, note:"Proteína de anclaje postsináptico"},
-      {gene:"ITPKA",          dir:"↑", logFC:0.28,  pval:0.009, note:"Señalización Ca²⁺ intracelular"},
-      {gene:"ITPR1",          dir:"↑", logFC:null,  pval:null,  note:"Señalización Ca²⁺ intracelular"},
-      {gene:"ITPR3",          dir:"↑", logFC:null,  pval:null,  note:"Señalización Ca²⁺ intracelular"},
-      {gene:"GABRA5",         dir:"↑", logFC:null,  pval:null,  note:"Inhibición tónica sostenida"},
-      {gene:"GABRB1",         dir:"↑", logFC:0.50,  pval:0.016, note:"Inhibición tónica sostenida"},
-      {gene:"KCNJ3 (GIRK1)", dir:"↓", logFC:-0.86, pval:0.045, note:"Canal K⁺ GABA-B reducido"},
-      {gene:"NTRK2 (TrkB)",  dir:"↓", logFC:null,  pval:null,  note:"Receptor BDNF; señalización neurotrófica ↓"},
+      {gene:"GRIN1",dir:"↑",logFC:null,pval:null,note:"Subunidad NMDA; potenciación activa"},
+      {gene:"GRIN2A",dir:"↑",logFC:1.57,pval:0.041,note:"Subunidad NMDA"},
+      {gene:"DLGAP1",dir:"↑",logFC:1.61,pval:0.048,note:"Proteína de anclaje postsináptico"},
+      {gene:"ITPKA",dir:"↑",logFC:0.28,pval:0.009,note:"Señalización Ca²⁺ intracelular"},
+      {gene:"ITPR1",dir:"↑",logFC:null,pval:null,note:"Señalización Ca²⁺ intracelular"},
+      {gene:"ITPR3",dir:"↑",logFC:null,pval:null,note:"Señalización Ca²⁺ intracelular"},
+      {gene:"GABRA5",dir:"↑",logFC:null,pval:null,note:"Inhibición tónica sostenida"},
+      {gene:"GABRB1",dir:"↑",logFC:0.50,pval:0.016,note:"Inhibición tónica sostenida"},
+      {gene:"KCNJ3 (GIRK1)",dir:"↓",logFC:-0.86,pval:0.045,note:"Canal K⁺ GABA-B reducido"},
+      {gene:"NTRK2 (TrkB)",dir:"↓",logFC:null,pval:null,note:"Receptor BDNF; señalización neurotrófica ↓"},
     ],
-    alcohol:"El alcohol potencia GABA e inhibe NMDA agudamente. La desregulación crónica es adaptación compensatoria: en machos el glutamato se desvía al catabolismo energético (circuito agotado + feedback colapsado → déficit de memoria); en hembras el sistema NMDA se potencia estructuralmente, generando un patrón compatible con vigilancia aumentada."
+    alcohol:"El alcohol potencia GABA e inhibe NMDA agudamente. En machos el glutamato se desvía al catabolismo energético (circuito agotado + feedback colapsado → déficit de memoria); en hembras el sistema NMDA se potencia estructuralmente, generando un patrón compatible con vigilancia aumentada."
   },
-  calcium: {
-    id:"calcium", abbr:"Ca²⁺", label:["Señalización","Ca²⁺"],
-    color:C.calcium, cx:715, cy:85,
+  calcium:{id:"calcium",abbr:"Ca²⁺",label:["Señalización","Ca²⁺"],color:C.calcium,cx:715,cy:85,
     desc:"Ajustes sex-específicos en canales de calcio y sensores intracelulares. Consecuencias en plasticidad sináptica, citoesqueleto y función mitocondrial.",
     males:[
-      {gene:"CACNA2D3", dir:"↓", logFC:-1.07, pval:0.023, note:"Subunidad canal Ca²⁺ tipo-L"},
-      {gene:"CACNA1A",  dir:"↓", logFC:-0.30, pval:0.030, note:"Subunidad α1 canal Ca²⁺"},
-      {gene:"CACNA2D1", dir:"↓", logFC:-0.58, pval:0.031, note:"Reducción influx Ca²⁺ extracelular"},
-      {gene:"HPCAL1",   dir:"↑", logFC:0.44,  pval:0.042, note:"Sensor Ca²⁺; familia hippocalcina"},
-      {gene:"PPP2R5B",  dir:"↓", logFC:-0.37, pval:0.013, note:"Regulación fosfatasa Ca²⁺-responsiva"},
-      {gene:"CAMK2B",   dir:"↓", logFC:-0.71, pval:0.051, note:"CaMKII-β; cerca umbral significación"},
+      {gene:"CACNA2D3",dir:"↓",logFC:-1.07,pval:0.023,note:"Subunidad canal Ca²⁺ tipo-L"},
+      {gene:"CACNA1A",dir:"↓",logFC:-0.30,pval:0.030,note:"Subunidad α1 canal Ca²⁺"},
+      {gene:"CACNA2D1",dir:"↓",logFC:-0.58,pval:0.031,note:"Reducción influx Ca²⁺ extracelular"},
+      {gene:"HPCAL1",dir:"↑",logFC:0.44,pval:0.042,note:"Sensor Ca²⁺; familia hippocalcina"},
+      {gene:"PPP2R5B",dir:"↓",logFC:-0.37,pval:0.013,note:"Regulación fosfatasa Ca²⁺-responsiva"},
+      {gene:"CAMK2B",dir:"↓",logFC:-0.71,pval:0.051,note:"CaMKII-β; cerca umbral significación"},
     ],
     females:[
-      {gene:"MICU1",   dir:"↑", logFC:0.35,  pval:0.033, note:"Regulador captación mitocondrial Ca²⁺"},
-      {gene:"FKBP1A",  dir:"↑", logFC:0.49,  pval:0.017, note:"Señalización intracelular Ca²⁺"},
-      {gene:"PPP2R5B", dir:"↑", logFC:0.39,  pval:0.035, note:"Regulación fosfatasa mediada Ca²⁺"},
-      {gene:"HPCAL4",  dir:"↓", logFC:-0.73, pval:0.003, note:"Sensor Ca²⁺ hippocalcina; actividad alterada"},
+      {gene:"MICU1",dir:"↑",logFC:0.35,pval:0.033,note:"Regulador captación mitocondrial Ca²⁺"},
+      {gene:"FKBP1A",dir:"↑",logFC:0.49,pval:0.017,note:"Señalización intracelular Ca²⁺"},
+      {gene:"PPP2R5B",dir:"↑",logFC:0.39,pval:0.035,note:"Regulación fosfatasa mediada Ca²⁺"},
+      {gene:"HPCAL4",dir:"↓",logFC:-0.73,pval:0.003,note:"Sensor Ca²⁺ hippocalcina; actividad alterada"},
     ],
-    alcohol:"El alcohol altera canales de Ca²⁺ voltaje-dependientes y homeostasis intracelular. Machos reducen influx extracelular (↓ CACNA); hembras reajustan el manejo mitocondrial (↑ MICU1). Divergencia en PPP2R5B (↓ machos, ↑ hembras): regulación opuesta de fosfatasas Ca²⁺-responsivas."
+    alcohol:"El alcohol altera canales de Ca²⁺ voltaje-dependientes y homeostasis intracelular. Machos reducen influx extracelular (↓ CACNA); hembras reajustan el manejo mitocondrial (↑ MICU1). Divergencia en PPP2R5B (↓ machos, ↑ hembras)."
   },
-  vesicles: {
-    id:"vesicles", abbr:"Vesículas", label:["Tráfico","Vesicular"],
-    color:C.vesicles, cx:715, cy:325,
-    desc:"Alteraciones en exocitosis, reciclaje y endocitosis sináptica. Machos: potenciación exocitótica; hembras: remodelación endocítica con posibles signos de envejecimiento prematuro.",
+  vesicles:{id:"vesicles",abbr:"Vesículas",label:["Tráfico","Vesicular"],color:C.vesicles,cx:715,cy:325,
+    desc:"Alteraciones en exocitosis, reciclaje y endocitosis sináptica. Machos: potenciación exocitótica; hembras: remodelación endocítica.",
     males:[
-      {gene:"SYT1",             dir:"↑", logFC:0.34,  pval:0.044, note:"Sinaptotagmina; exocitosis Ca²⁺-disparada"},
-      {gene:"CPLX2",            dir:"↑", logFC:null,  pval:null,  note:"Complexina; fusión vesicular"},
-      {gene:"DNM1L",            dir:"↑", logFC:0.51,  pval:0.030, note:"Reciclaje sináptico"},
-      {gene:"VGLUT2 (SLC17A6)",dir:"↑", logFC:0.70,  pval:0.010, note:"Transportador Glu vesicular"},
-      {gene:"CLTA",             dir:"↑", logFC:0.36,  pval:0.045, note:"Clatrina; endocitosis mediada"},
-      {gene:"RABEP1",           dir:"↑", logFC:0.35,  pval:0.035, note:"Efector Rab5; maduración endosoma"},
-      {gene:"SH3GL1",           dir:"↑", logFC:0.40,  pval:0.016, note:"Curvatura membrana; inicio endocitosis"},
-      {gene:"ATP6AP2",          dir:"↓", logFC:null,  pval:null,  note:"V-ATPasa; fallo acidificación vesicular"},
-      {gene:"ATP6V0A1",         dir:"↓", logFC:null,  pval:null,  note:"V-ATPasa subunidad a1"},
+      {gene:"SYT1",dir:"↑",logFC:0.34,pval:0.044,note:"Sinaptotagmina; exocitosis Ca²⁺-disparada"},
+      {gene:"CPLX2",dir:"↑",logFC:null,pval:null,note:"Complexina; fusión vesicular"},
+      {gene:"DNM1L",dir:"↑",logFC:0.51,pval:0.030,note:"Reciclaje sináptico"},
+      {gene:"VGLUT2",dir:"↑",logFC:0.70,pval:0.010,note:"Transportador Glu vesicular"},
+      {gene:"CLTA",dir:"↑",logFC:0.36,pval:0.045,note:"Clatrina; endocitosis mediada"},
+      {gene:"RABEP1",dir:"↑",logFC:0.35,pval:0.035,note:"Efector Rab5; maduración endosoma"},
+      {gene:"SH3GL1",dir:"↑",logFC:0.40,pval:0.016,note:"Curvatura membrana; inicio endocitosis"},
+      {gene:"ATP6AP2",dir:"↓",logFC:null,pval:null,note:"V-ATPasa; fallo acidificación vesicular"},
+      {gene:"ATP6V0A1",dir:"↓",logFC:null,pval:null,note:"V-ATPasa subunidad a1"},
     ],
     females:[
-      {gene:"DNM1",     dir:"↑", logFC:null,  pval:null,  note:"Dinamina-1; escisión vesicular"},
-      {gene:"RIMS1",    dir:"↑", logFC:0.56,  pval:0.047, note:"Componente zona activa sináptica"},
-      {gene:"ATP6V1C1", dir:"↑", logFC:0.31,  pval:0.019, note:"V-ATPasa periférica; acidificación compensatoria"},
-      {gene:"ACTR2",    dir:"↑", logFC:0.29,  pval:0.004, note:"Arp2/3; nucleación actina endocítica"},
-      {gene:"IST1",     dir:"↑", logFC:0.40,  pval:0.048, note:"Reciclaje endosomal"},
-      {gene:"RAB31",    dir:"↑", logFC:0.64,  pval:0.013, note:"Tráfico vesicular profundo"},
-      {gene:"SNX3",     dir:"↑", logFC:0.36,  pval:0.007, note:"Reciclaje endosomal"},
-      {gene:"ARF6",     dir:"↓", logFC:-0.49, pval:0.036, note:"Remodelación actina ↓"},
-      {gene:"ARPC1B",   dir:"↓", logFC:-0.46, pval:0.005, note:"Subunidad Arp2/3; formación vesicular ↓"},
-      {gene:"EPN1",     dir:"↓", logFC:-0.44, pval:0.028, note:"Epsina; formación vesicular clatrina ↓"},
-      {gene:"KIF5A",    dir:"↓", logFC:-0.64, pval:0.042, note:"Kinesina; transporte axonal anterógrado ↓"},
+      {gene:"DNM1",dir:"↑",logFC:null,pval:null,note:"Dinamina-1; escisión vesicular"},
+      {gene:"RIMS1",dir:"↑",logFC:0.56,pval:0.047,note:"Componente zona activa sináptica"},
+      {gene:"ATP6V1C1",dir:"↑",logFC:0.31,pval:0.019,note:"V-ATPasa periférica; acidificación compensatoria"},
+      {gene:"ACTR2",dir:"↑",logFC:0.29,pval:0.004,note:"Arp2/3; nucleación actina endocítica"},
+      {gene:"IST1",dir:"↑",logFC:0.40,pval:0.048,note:"Reciclaje endosomal"},
+      {gene:"RAB31",dir:"↑",logFC:0.64,pval:0.013,note:"Tráfico vesicular profundo"},
+      {gene:"SNX3",dir:"↑",logFC:0.36,pval:0.007,note:"Reciclaje endosomal"},
+      {gene:"ARF6",dir:"↓",logFC:-0.49,pval:0.036,note:"Remodelación actina ↓"},
+      {gene:"ARPC1B",dir:"↓",logFC:-0.46,pval:0.005,note:"Subunidad Arp2/3; formación vesicular ↓"},
+      {gene:"EPN1",dir:"↓",logFC:-0.44,pval:0.028,note:"Epsina; formación vesicular clatrina ↓"},
+      {gene:"KIF5A",dir:"↓",logFC:-0.64,pval:0.042,note:"Kinesina; transporte axonal anterógrado ↓"},
     ],
-    alcohol:"El alcohol perturba liberación y reciclaje de neurotransmisores. En machos ↑ SYT1/CPLX2 refleja intento de mantener exocitosis pese a menor influx Ca²⁺. En hembras ↑ DNM1 puede reflejar envejecimiento prematuro asociado al consumo crónico."
+    alcohol:"El alcohol perturba liberación y reciclaje de neurotransmisores. En machos ↑ SYT1/CPLX2 refleja intento de mantener exocitosis pese a menor influx Ca²⁺. En hembras ↑ DNM1 puede reflejar envejecimiento prematuro."
   },
-  cytoskeleton: {
-    id:"cytoskeleton", abbr:"Citoeq.", label:["Remodelación","Citoesquelética"],
-    color:C.cytoskeleton, cx:145, cy:325,
-    desc:"Remodelación citoesquelética con estrategias mecánicamente distintas entre sexos. Relevante para regulación de tau y riesgo diferencial de demencia.",
+  cytoskeleton:{id:"cytoskeleton",abbr:"Citoeq.",label:["Remodelación","Citoesquelética"],color:C.cytoskeleton,cx:145,cy:325,
+    desc:"Remodelación citoesquelética con estrategias mecánicamente distintas entre sexos. Relevante para tau y riesgo diferencial de demencia.",
     males:[
-      {gene:"TMOD2",          dir:"↑", logFC:0.48,  pval:0.037, note:"Estabilización extremos actina"},
-      {gene:"TAGLN / TAGLN2", dir:"↑", logFC:null,  pval:null,  note:"Estabilización filamentos actina"},
-      {gene:"TMSB4X",         dir:"↑", logFC:0.42,  pval:0.048, note:"Regulación actina monomérica"},
-      {gene:"MYL12B",         dir:"↑", logFC:0.29,  pval:0.047, note:"Contractilidad citoesquelética"},
-      {gene:"TUBB5",          dir:"↑", logFC:null,  pval:null,  note:"Microtúbulos; reorganización compensatoria"},
-      {gene:"SEPTIN7",        dir:"↑", logFC:null,  pval:null,  note:"Rigidez estructural cuellos dendríticos"},
-      {gene:"DYNLRB1",        dir:"↑", logFC:0.32,  pval:0.020, note:"Transporte retrógrado"},
-      {gene:"GSN",            dir:"↓", logFC:null,  pval:null,  note:"Severing actina Ca²⁺-dependiente ↓"},
-      {gene:"MAPT/MARK1/TSC2",dir:"~", logFC:null,  pval:null,  note:"Tau hipofosforilado (fosfoproteómica)"},
+      {gene:"TMOD2",dir:"↑",logFC:0.48,pval:0.037,note:"Estabilización extremos actina"},
+      {gene:"TAGLN/TAGLN2",dir:"↑",logFC:null,pval:null,note:"Estabilización filamentos actina"},
+      {gene:"TMSB4X",dir:"↑",logFC:0.42,pval:0.048,note:"Regulación actina monomérica"},
+      {gene:"MYL12B",dir:"↑",logFC:0.29,pval:0.047,note:"Contractilidad citoesquelética"},
+      {gene:"TUBB5",dir:"↑",logFC:null,pval:null,note:"Microtúbulos; reorganización compensatoria"},
+      {gene:"SEPTIN7",dir:"↑",logFC:null,pval:null,note:"Rigidez estructural cuellos dendríticos"},
+      {gene:"DYNLRB1",dir:"↑",logFC:0.32,pval:0.020,note:"Transporte retrógrado"},
+      {gene:"GSN",dir:"↓",logFC:null,pval:null,note:"Severing actina Ca²⁺-dependiente ↓"},
+      {gene:"MAPT/MARK1/TSC2",dir:"~",logFC:null,pval:null,note:"Tau hipofosforilado (fosfoproteómica)"},
     ],
     females:[
-      {gene:"TMOD2",   dir:"↑", logFC:0.29,  pval:0.004, note:"Estabilización extremos actina"},
-      {gene:"ACTR2",   dir:"↑", logFC:0.29,  pval:0.004, note:"Arp2/3; reorientación filamentos lineales"},
-      {gene:"DYNLRB1", dir:"↑", logFC:0.16,  pval:0.031, note:"Transporte retrógrado"},
-      {gene:"ARPC1B",  dir:"↓", logFC:-0.46, pval:0.005, note:"Arp2/3; ↓ nucleación ramificada"},
-      {gene:"TUBA4A",  dir:"↓", logFC:null,  pval:null,  note:"↓ poliglutamilación → neuroprotección"},
+      {gene:"TMOD2",dir:"↑",logFC:0.29,pval:0.004,note:"Estabilización extremos actina"},
+      {gene:"ACTR2",dir:"↑",logFC:0.29,pval:0.004,note:"Arp2/3; reorientación filamentos lineales"},
+      {gene:"DYNLRB1",dir:"↑",logFC:0.16,pval:0.031,note:"Transporte retrógrado"},
+      {gene:"ARPC1B",dir:"↓",logFC:-0.46,pval:0.005,note:"Arp2/3; ↓ nucleación ramificada"},
+      {gene:"TUBA4A",dir:"↓",logFC:null,pval:null,note:"↓ poliglutamilación → neuroprotección"},
     ],
-    alcohol:"El alcohol altera morfología de espinas dendríticas y plasticidad sináptica. La divergencia en tau (hipofosforilación machos / hiperfosforilación hembras) es crítica para el riesgo diferencial de demencia relacionada con alcohol entre sexos."
+    alcohol:"El alcohol altera morfología de espinas dendríticas y plasticidad sináptica. La divergencia en tau (hipofosforilación machos / hiperfosforilación hembras) es crítica para el riesgo diferencial de demencia."
   },
-  mitochondria: {
-    id:"mitochondria", abbr:"Mitocond.", label:["Metabolismo","Mitocondrial"],
-    color:C.mitochondria, cx:145, cy:135,
+  mitochondria:{id:"mitochondria",abbr:"Mitocond.",label:["Metabolismo","Mitocondrial"],color:C.mitochondria,cx:145,cy:135,
     desc:"Alteraciones metabólicas más extensas en machos. Cubre glucólisis, ciclo TCA, β-oxidación, cetogénesis y mielinización.",
     males:[
-      {gene:"HK1",    dir:"↑", logFC:0.31,  pval:0.018,   note:"Fosforilación inicial glucosa"},
-      {gene:"GPI",    dir:"↑", logFC:null,  pval:null,    note:"G6P → F6P (glucólisis)"},
-      {gene:"PFKL",   dir:"↓", logFC:-0.43, pval:0.027,   note:"Enzima limitante glucólisis → desvío Glu"},
-      {gene:"IDH3A",  dir:"↑", logFC:null,  pval:null,    note:"TCA acelerado"},
-      {gene:"MDH2",   dir:"↑", logFC:0.53,  pval:0.024,   note:"Homeostasis TCA"},
-      {gene:"SDHB",   dir:"↓", logFC:-0.29, pval:0.002,   note:"Complejo II; acumulación succinato"},
-      {gene:"ECH1",   dir:"↑", logFC:null,  pval:null,    note:"β-oxidación ácidos grasos"},
-      {gene:"HMGCS2", dir:"↑", logFC:null,  pval:null,    note:"Cetogénesis / mevalonato"},
-      {gene:"FDPS",   dir:"↑", logFC:0.33,  pval:0.030,   note:"Ruta mevalonato → colesterol → mielina"},
+      {gene:"HK1",dir:"↑",logFC:0.31,pval:0.018,note:"Fosforilación inicial glucosa"},
+      {gene:"GPI",dir:"↑",logFC:null,pval:null,note:"G6P → F6P (glucólisis)"},
+      {gene:"PFKL",dir:"↓",logFC:-0.43,pval:0.027,note:"Enzima limitante glucólisis → desvío Glu"},
+      {gene:"IDH3A",dir:"↑",logFC:null,pval:null,note:"TCA acelerado"},
+      {gene:"MDH2",dir:"↑",logFC:0.53,pval:0.024,note:"Homeostasis TCA"},
+      {gene:"SDHB",dir:"↓",logFC:-0.29,pval:0.002,note:"Complejo II; acumulación succinato"},
+      {gene:"ECH1",dir:"↑",logFC:null,pval:null,note:"β-oxidación ácidos grasos"},
+      {gene:"HMGCS2",dir:"↑",logFC:null,pval:null,note:"Cetogénesis / mevalonato"},
+      {gene:"FDPS",dir:"↑",logFC:0.33,pval:0.030,note:"Ruta mevalonato → colesterol → mielina"},
     ],
     females:[
-      {gene:"PGAM1",    dir:"↓", logFC:null,  pval:null,    note:"Bloqueo selectivo glucólisis"},
-      {gene:"PDHB",     dir:"↓", logFC:null,  pval:null,    note:"↓ entrada TCA → cetogénesis"},
-      {gene:"ACACA",    dir:"↑", logFC:0.24,  pval:0.032,   note:"Lipogénesis de novo; ¿restauración mielina?"},
-      {gene:"HMGCS2",   dir:"↑", logFC:0.40,  pval:0.015,   note:"Cetogénesis"},
-      {gene:"HMGCL",    dir:"↑", logFC:null,  pval:null,    note:"HMG-CoA → acetoacetato"},
-      {gene:"BDH1",     dir:"↓", logFC:-0.30, pval:0.004,   note:"β-HB sintasa ↓ → GPR43-BDNF"},
-      {gene:"CRAT",     dir:"↑", logFC:0.36,  pval:0.016,   note:"Lanzadera acetil-CoA mitocondrial"},
-      {gene:"MAPK8IP3", dir:"↓", logFC:-0.26, pval:0.00005, note:"GPR43-pERK downstream"},
+      {gene:"PGAM1",dir:"↓",logFC:null,pval:null,note:"Bloqueo selectivo glucólisis"},
+      {gene:"PDHB",dir:"↓",logFC:null,pval:null,note:"↓ entrada TCA → cetogénesis"},
+      {gene:"ACACA",dir:"↑",logFC:0.24,pval:0.032,note:"Lipogénesis de novo; ¿restauración mielina?"},
+      {gene:"HMGCS2",dir:"↑",logFC:0.40,pval:0.015,note:"Cetogénesis"},
+      {gene:"HMGCL",dir:"↑",logFC:null,pval:null,note:"HMG-CoA → acetoacetato"},
+      {gene:"BDH1",dir:"↓",logFC:-0.30,pval:0.004,note:"β-HB sintasa ↓ → GPR43-BDNF"},
+      {gene:"CRAT",dir:"↑",logFC:0.36,pval:0.016,note:"Lanzadera acetil-CoA mitocondrial"},
+      {gene:"MAPK8IP3",dir:"↓",logFC:-0.26,pval:0.00005,note:"GPR43-pERK downstream"},
     ],
-    alcohol:"El alcohol genera exceso NADH y acetaldehído que perturban el metabolismo cerebral. En machos: PFKL↓ desvía F6P a hexosaminas → Glu extra (nexo Glu/GABA). En hembras: ↓ PDHB favorece cetogénesis; acetoacetato puede modular GPR43→BDNF (neuroprotección potencial)."
+    alcohol:"El alcohol genera exceso NADH y acetaldehído que perturban el metabolismo cerebral. En machos PFKL↓ desvía F6P a hexosaminas → Glu extra. En hembras ↓ PDHB favorece cetogénesis; acetoacetato puede modular GPR43→BDNF."
   },
-  oxphos: {
-    id:"oxphos", abbr:"OXPHOS", label:["Fosforilación","Oxidativa"],
-    color:C.oxphos, cx:430, cy:480,
+  oxphos:{id:"oxphos",abbr:"OXPHOS",label:["Fosforilación","Oxidativa"],color:C.oxphos,cx:430,cy:480,
     desc:"Remodelación de subunidades de complejos I–V. Más extensa en hembras. Consecuencia aguas abajo de Ca²⁺ y metabolismo mitocondrial.",
     males:[
-      {gene:"NDUFS4", dir:"↑", logFC:null,  pval:null,    note:"Complejo I; estabilización estructural"},
-      {gene:"NDUFS6", dir:"↑", logFC:0.96,  pval:0.027,   note:"Complejo I"},
-      {gene:"NDUFA5", dir:"↑", logFC:0.46,  pval:0.027,   note:"Complejo I; brazo hidrofílico accesorio"},
-      {gene:"SDHB",   dir:"↓", logFC:-0.29, pval:0.003,   note:"Complejo II"},
-      {gene:"COX4I1", dir:"↓", logFC:null,  pval:null,    note:"Complejo IV; overlap Alzheimer"},
-      {gene:"COX5A",  dir:"↓", logFC:-0.29, pval:0.010,   note:"Complejo IV; overlap Alzheimer"},
-      {gene:"MT-CO2", dir:"↓", logFC:-0.69, pval:0.028,   note:"Complejo IV; subunidad catalítica"},
-      {gene:"COX5B",  dir:"↑", logFC:0.77,  pval:0.045,   note:"Complejo IV; compensatorio"},
-      {gene:"ATP5IF1",dir:"↑", logFC:null,  pval:null,    note:"ATP sintasa; +168% vs control"},
-      {gene:"ATP5PF", dir:"↑", logFC:0.55,  pval:0.037,   note:"ATP sintasa; tallo periférico F₁-F₀"},
-      {gene:"ATP5PD", dir:"↑", logFC:0.34,  pval:0.023,   note:"ATP sintasa; tallo periférico"},
+      {gene:"NDUFS4",dir:"↑",logFC:null,pval:null,note:"Complejo I; estabilización estructural"},
+      {gene:"NDUFS6",dir:"↑",logFC:0.96,pval:0.027,note:"Complejo I"},
+      {gene:"NDUFA5",dir:"↑",logFC:0.46,pval:0.027,note:"Complejo I; brazo hidrofílico accesorio"},
+      {gene:"SDHB",dir:"↓",logFC:-0.29,pval:0.003,note:"Complejo II"},
+      {gene:"COX4I1",dir:"↓",logFC:null,pval:null,note:"Complejo IV; overlap Alzheimer"},
+      {gene:"COX5A",dir:"↓",logFC:-0.29,pval:0.010,note:"Complejo IV; overlap Alzheimer"},
+      {gene:"MT-CO2",dir:"↓",logFC:-0.69,pval:0.028,note:"Complejo IV; subunidad catalítica"},
+      {gene:"COX5B",dir:"↑",logFC:0.77,pval:0.045,note:"Complejo IV; compensatorio"},
+      {gene:"ATP5IF1",dir:"↑",logFC:null,pval:null,note:"ATP sintasa; +168% vs control"},
+      {gene:"ATP5PF",dir:"↑",logFC:0.55,pval:0.037,note:"ATP sintasa; tallo periférico F₁-F₀"},
+      {gene:"ATP5PD",dir:"↑",logFC:0.34,pval:0.023,note:"ATP sintasa; tallo periférico"},
     ],
     females:[
-      {gene:"NDUFS4",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; estructural"},
-      {gene:"NDUFS2",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; centros Fe-S"},
-      {gene:"NDUFV3",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; regulación fina"},
-      {gene:"NDUFV2",  dir:"↓", logFC:null, pval:null,    note:"Complejo I; flavoproteína"},
-      {gene:"NDUFA11", dir:"↓", logFC:null, pval:null,    note:"Complejo I; supercomplejo respiratorio"},
-      {gene:"UQCRC1",  dir:"↑", logFC:0.29, pval:0.022,   note:"Complejo III; flujo electrones"},
-      {gene:"UQCRQ",   dir:"↑", logFC:0.23, pval:"7.3e-5",note:"Complejo III"},
-      {gene:"COX5A",   dir:"↑", logFC:null, pval:null,    note:"Complejo IV (opuesto a machos)"},
-      {gene:"ATP5F1D", dir:"↑", logFC:null, pval:null,    note:"ATP sintasa; dominio F₁"},
-      {gene:"ATP5F1E", dir:"↑", logFC:0.39, pval:0.019,   note:"ATP sintasa; actividad rotacional"},
+      {gene:"NDUFS4",dir:"↑",logFC:null,pval:null,note:"Complejo I; estructural"},
+      {gene:"NDUFS2",dir:"↑",logFC:null,pval:null,note:"Complejo I; centros Fe-S"},
+      {gene:"NDUFV3",dir:"↑",logFC:null,pval:null,note:"Complejo I; regulación fina"},
+      {gene:"NDUFV2",dir:"↓",logFC:null,pval:null,note:"Complejo I; flavoproteína"},
+      {gene:"NDUFA11",dir:"↓",logFC:null,pval:null,note:"Complejo I; supercomplejo respiratorio"},
+      {gene:"UQCRC1",dir:"↑",logFC:0.29,pval:0.022,note:"Complejo III; flujo electrones"},
+      {gene:"UQCRQ",dir:"↑",logFC:0.23,pval:"7.3e-5",note:"Complejo III"},
+      {gene:"COX5A",dir:"↑",logFC:null,pval:null,note:"Complejo IV (opuesto a machos)"},
+      {gene:"ATP5F1D",dir:"↑",logFC:null,pval:null,note:"ATP sintasa; dominio F₁"},
+      {gene:"ATP5F1E",dir:"↑",logFC:0.39,pval:0.019,note:"ATP sintasa; actividad rotacional"},
     ],
-    alcohol:"En machos: patrón COX4I1/COX5A ↓ solapa con hallazgos en Alzheimer. ATP5IF1 +168% sugiere respuesta de emergencia. En hembras: restructuración más amplia del Complejo I indica adaptación más profunda a la disfunción mitocondrial inducida por alcohol."
+    alcohol:"En machos: patrón COX4I1/COX5A ↓ solapa con hallazgos en Alzheimer. ATP5IF1 +168% sugiere respuesta de emergencia. En hembras: restructuración más amplia del Complejo I indica adaptación más profunda."
   },
-  ribosomes: {
-    id:"ribosomes", abbr:"Ribos.", label:["Proteínas","Ribosomales"],
-    color:C.ribosomes, cx:145, cy:480,
-    desc:"Alteraciones traduccionales más pronunciadas en hembras. Refleja mayor demanda de síntesis proteica para sostener la extensa remodelación sináptica y citoesquelética.",
+  ribosomes:{id:"ribosomes",abbr:"Ribos.",label:["Proteínas","Ribosomales"],color:C.ribosomes,cx:145,cy:480,
+    desc:"Alteraciones traduccionales más pronunciadas en hembras. Mayor demanda de síntesis proteica para la remodelación sináptica.",
     males:[
-      {gene:"RPLP2", dir:"↑", logFC:null, pval:null, note:"60S; factores de elongación"},
-      {gene:"RPL29", dir:"↑", logFC:null, pval:null, note:"60S"},
-      {gene:"RPS21", dir:"↑", logFC:null, pval:null, note:"40S"},
-      {gene:"RPS12", dir:"↑", logFC:null, pval:null, note:"40S"},
+      {gene:"RPLP2",dir:"↑",logFC:null,pval:null,note:"60S; factores de elongación"},
+      {gene:"RPL29",dir:"↑",logFC:null,pval:null,note:"60S"},
+      {gene:"RPS21",dir:"↑",logFC:null,pval:null,note:"40S"},
+      {gene:"RPS12",dir:"↑",logFC:null,pval:null,note:"40S"},
     ],
     females:[
-      {gene:"RPS5",  dir:"↑", logFC:null, pval:null, note:"40S; reconocimiento mRNA"},
-      {gene:"RPS18", dir:"↑", logFC:null, pval:null, note:"40S; iniciación"},
-      {gene:"RPS25", dir:"↑", logFC:null, pval:null, note:"40S; iniciación"},
-      {gene:"RPS26", dir:"↑", logFC:null, pval:null, note:"40S; iniciación"},
-      {gene:"RPL2",  dir:"↑", logFC:null, pval:null, note:"60S; síntesis polipéptidos"},
-      {gene:"RPL14", dir:"↑", logFC:null, pval:null, note:"60S"},
-      {gene:"RPL15", dir:"↑", logFC:null, pval:null, note:"60S"},
-      {gene:"RPL27", dir:"↑", logFC:null, pval:null, note:"60S"},
-      {gene:"RPS12", dir:"↑", logFC:null, pval:null, note:"40S"},
-      {gene:"RPS19", dir:"↑", logFC:null, pval:null, note:"40S"},
-      {gene:"RPS23", dir:"↑", logFC:null, pval:null, note:"40S"},
+      {gene:"RPS5",dir:"↑",logFC:null,pval:null,note:"40S; reconocimiento mRNA"},
+      {gene:"RPS18",dir:"↑",logFC:null,pval:null,note:"40S; iniciación"},
+      {gene:"RPS25",dir:"↑",logFC:null,pval:null,note:"40S; iniciación"},
+      {gene:"RPS26",dir:"↑",logFC:null,pval:null,note:"40S; iniciación"},
+      {gene:"RPL2",dir:"↑",logFC:null,pval:null,note:"60S; síntesis polipéptidos"},
+      {gene:"RPL14",dir:"↑",logFC:null,pval:null,note:"60S"},
+      {gene:"RPL15",dir:"↑",logFC:null,pval:null,note:"60S"},
+      {gene:"RPS12",dir:"↑",logFC:null,pval:null,note:"40S"},
+      {gene:"RPS19",dir:"↑",logFC:null,pval:null,note:"40S"},
+      {gene:"RPS23",dir:"↑",logFC:null,pval:null,note:"40S"},
     ],
-    alcohol:"El aumento generalizado en proteínas ribosomales en hembras refleja incremento compensatorio de capacidad traduccional para sostener la extensa remodelación de receptores NMDA, andamiajes postsinápticos y proteínas citoesqueléticas."
+    alcohol:"El aumento generalizado en proteínas ribosomales en hembras refleja incremento compensatorio de capacidad traduccional para sostener la remodelación de receptores NMDA, andamiajes postsinápticos y proteínas citoesqueléticas."
   }
 };
 
-const EDGES = [
-  {from:"glutGABA",    to:"calcium",       label:"NMDA → Ca²⁺",           color:"#7B3FD4"},
-  {from:"calcium",     to:"vesicles",      label:"exocitosis Ca²⁺",        color:"#1A6FD4"},
-  {from:"calcium",     to:"cytoskeleton",  label:"GSN Ca²⁺-dep.",          color:"#0F9E55"},
-  {from:"glutGABA",    to:"mitochondria",  label:"Glu → catabolismo",      color:"#C98500"},
-  {from:"mitochondria",to:"oxphos",        label:"TCA → OXPHOS",           color:"#D41A42"},
-  {from:"vesicles",    to:"oxphos",        label:"demanda ATP",             color:"#7B3FD4"},
-  {from:"cytoskeleton",to:"vesicles",      label:"actina endocítica",       color:"#0898A0"},
-  {from:"oxphos",      to:"ribosomes",     label:"ATP → traducción",        color:"#E84C1E"},
-  {from:"ribosomes",   to:"cytoskeleton",  label:"proteínas estructurales", color:"#0898A0"},
-  {from:"glutGABA",    to:"vesicles",      label:"reciclaje NT",            color:"#E84C1E"},
-  {from:"mitochondria",to:"cytoskeleton",  label:"tau / energía",           color:"#0F9E55"},
+const EDGES=[
+  {from:"glutGABA",to:"calcium",label:"NMDA → Ca²⁺",color:"#7430C8"},
+  {from:"calcium",to:"vesicles",label:"exocitosis Ca²⁺",color:"#1A6FD4"},
+  {from:"calcium",to:"cytoskeleton",label:"GSN Ca²⁺-dep.",color:"#0E9650"},
+  {from:"glutGABA",to:"mitochondria",label:"Glu → catabolismo",color:"#C47F00"},
+  {from:"mitochondria",to:"oxphos",label:"TCA → OXPHOS",color:"#CC1840"},
+  {from:"vesicles",to:"oxphos",label:"demanda ATP",color:"#7430C8"},
+  {from:"cytoskeleton",to:"vesicles",label:"actina endocítica",color:"#0892A0"},
+  {from:"oxphos",to:"ribosomes",label:"ATP → traducción",color:"#D94F27"},
+  {from:"ribosomes",to:"cytoskeleton",label:"proteínas estructurales",color:"#0892A0"},
+  {from:"glutGABA",to:"vesicles",label:"reciclaje NT",color:"#D94F27"},
+  {from:"mitochondria",to:"cytoskeleton",label:"tau / energía",color:"#0E9650"},
 ];
 
-const R = 52;
-const VW = 880, VH = 580;
+const REFS=[
+  {authors:"Sánchez-Marín et al. (2022)",doi:"10.20882/adicciones.2483",url:"https://doi.org/10.20882/adicciones.2483"},
+  {authors:"Gobbi et al. (2024)",doi:"10.1186/s13293-024-00649-5",url:"https://doi.org/10.1186/s13293-024-00649-5"},
+  {authors:"Verheul-Campos et al. (2025)",doi:"10.1016/j.drugalcdep.2025.112891",url:"https://doi.org/10.1016/j.drugalcdep.2025.112891"},
+];
 
-function edgePts(a, b) {
-  const dx=b.cx-a.cx, dy=b.cy-a.cy, d=Math.sqrt(dx*dx+dy*dy);
-  const ux=dx/d, uy=dy/d;
-  return { x1:a.cx+ux*R, y1:a.cy+uy*R, x2:b.cx-ux*R, y2:b.cy-uy*R, mx:(a.cx+b.cx)/2, my:(a.cy+b.cy)/2 };
+const R=52,VW=880,VH=580;
+
+function edgePts(a,b){
+  const dx=b.cx-a.cx,dy=b.cy-a.cy,d=Math.sqrt(dx*dx+dy*dy),ux=dx/d,uy=dy/d;
+  return{x1:a.cx+ux*R,y1:a.cy+uy*R,x2:b.cx-ux*R,y2:b.cy-uy*R,mx:(a.cx+b.cx)/2,my:(a.cy+b.cy)/2};
 }
 
-/* ── Draggable modal ─────────────────────────────────────────────────────── */
-function AlcoholModal({ node, onClose }) {
-  const [pos, setPos] = useState({ x: window.innerWidth/2 - 230, y: window.innerHeight/2 - 140 });
-  const dragging = useRef(false);
-  const origin   = useRef({});
-
-  const onMouseDown = useCallback(e => {
-    dragging.current = true;
-    origin.current = { mx: e.clientX, my: e.clientY, px: pos.x, py: pos.y };
-    e.preventDefault();
-  }, [pos]);
-
-  const onMouseMove = useCallback(e => {
-    if (!dragging.current) return;
-    setPos({ x: origin.current.px + e.clientX - origin.current.mx, y: origin.current.py + e.clientY - origin.current.my });
-  }, []);
-
-  const onMouseUp = useCallback(() => { dragging.current = false; }, []);
-
-  return (
-    <div style={{position:"fixed",inset:0,zIndex:1000,pointerEvents:"none"}} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
-      <div style={{
-        position:"absolute", left:pos.x, top:pos.y,
-        width:460, background:"#fff",
-        border:`2px solid ${node.color}`,
-        borderRadius:12,
-        boxShadow:`0 16px 60px ${node.color}25, 0 4px 16px rgba(0,0,0,0.10)`,
-        pointerEvents:"all", userSelect:"none",
-        fontFamily:"'DM Sans', sans-serif",
-      }}>
-        <div onMouseDown={onMouseDown} style={{
-          background:node.color, padding:"12px 16px", borderRadius:"10px 10px 0 0",
-          cursor:"grab", display:"flex", alignItems:"center", justifyContent:"space-between",
-        }}>
+/* ── Draggable Alcohol Modal ─────────────────────────────────────────────── */
+function AlcoholModal({node,onClose}){
+  const[pos,setPos]=useState({x:window.innerWidth/2-230,y:window.innerHeight/2-130});
+  const drag=useRef(false),orig=useRef({});
+  const down=useCallback(e=>{drag.current=true;orig.current={mx:e.clientX,my:e.clientY,px:pos.x,py:pos.y};e.preventDefault();},[pos]);
+  const move=useCallback(e=>{if(!drag.current)return;setPos({x:orig.current.px+e.clientX-orig.current.mx,y:orig.current.py+e.clientY-orig.current.my});},[]);
+  const up=useCallback(()=>{drag.current=false;},[]);
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:1000,pointerEvents:"none"}} onMouseMove={move} onMouseUp={up}>
+      <div style={{position:"absolute",left:pos.x,top:pos.y,width:460,background:"#fff",
+        border:`2px solid ${node.color}`,borderRadius:10,
+        boxShadow:`0 20px 60px ${node.color}20,0 4px 20px rgba(0,0,0,0.08)`,
+        pointerEvents:"all",userSelect:"none"}}>
+        <div onMouseDown={down} style={{background:node.color,padding:"11px 16px",borderRadius:"8px 8px 0 0",
+          cursor:"grab",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div>
-            <div style={{fontSize:9,color:"rgba(255,255,255,0.7)",fontFamily:"'DM Mono',monospace",letterSpacing:".14em",textTransform:"uppercase",marginBottom:2}}>
-              Nexo con Alcohol
-            </div>
-            <div style={{fontSize:14,fontWeight:700,color:"#fff",fontFamily:"'Syne',sans-serif"}}>
-              {node.label.join(" ")}
-            </div>
+            <div style={{fontSize:9,color:"rgba(255,255,255,0.65)",fontFamily:"'Roboto Mono',monospace",
+              letterSpacing:".15em",textTransform:"uppercase",marginBottom:2}}>Nexo con Alcohol</div>
+            <div style={{fontSize:14,fontWeight:700,color:"#fff",letterSpacing:"-.01em"}}>{node.label.join(" ")}</div>
           </div>
-          <button onClick={onClose} style={{
-            background:"rgba(255,255,255,0.2)", border:"none", borderRadius:6,
-            color:"#fff", cursor:"pointer", fontSize:18, fontWeight:700,
-            width:30, height:30, display:"flex", alignItems:"center", justifyContent:"center",
-          }}>×</button>
+          <button onClick={onClose} style={{background:"rgba(255,255,255,0.18)",border:"none",borderRadius:5,
+            color:"#fff",cursor:"pointer",fontSize:18,fontWeight:700,width:28,height:28,
+            display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
         </div>
-        <div style={{padding:"18px 20px"}}>
-          <p style={{margin:0, fontSize:13.5, color:"#333", lineHeight:1.85, fontFamily:"'DM Sans',sans-serif"}}>
-            {node.alcohol}
-          </p>
-          <div style={{marginTop:14,fontSize:10,color:"#bbb",fontFamily:"'DM Mono',monospace",letterSpacing:".08em",textAlign:"right"}}>
-            — arrastra para mover · × para cerrar
+        <div style={{padding:"18px 20px 20px"}}>
+          <p style={{margin:0,fontSize:13.5,color:"#333",lineHeight:1.85,fontWeight:300}}>{node.alcohol}</p>
+          <div style={{marginTop:12,fontSize:9,color:"#ccc",fontFamily:"'Roboto Mono',monospace",
+            letterSpacing:".08em",textAlign:"right"}}>arrastra · × cierra</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── References Modal ────────────────────────────────────────────────────── */
+function RefsModal({onClose}){
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.35)",
+      display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
+      <div style={{background:"#fff",borderRadius:12,padding:"28px 30px",width:520,maxWidth:"92vw",
+        boxShadow:"0 24px 80px rgba(0,0,0,0.15)"}} onClick={e=>e.stopPropagation()}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+          <h2 style={{fontSize:16,fontWeight:700,color:"#111",letterSpacing:"-.01em"}}>Referencias</h2>
+          <button onClick={onClose} style={{background:"#f5f5f5",border:"none",borderRadius:6,
+            cursor:"pointer",fontSize:16,fontWeight:700,color:"#666",width:28,height:28,
+            display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          {REFS.map((r,i)=>(
+            <div key={i} style={{borderLeft:"3px solid #1A6FD4",paddingLeft:14}}>
+              <div style={{fontSize:13.5,fontWeight:500,color:"#111",marginBottom:4}}>{r.authors}</div>
+              <a href={r.url} target="_blank" rel="noopener noreferrer"
+                style={{fontSize:12,color:"#1A6FD4",fontFamily:"'Roboto Mono',monospace",
+                  textDecoration:"none",letterSpacing:".01em",display:"inline-flex",alignItems:"center",gap:5}}>
+                <span>doi:{r.doi}</span>
+                <span style={{fontSize:10}}>↗</span>
+              </a>
+            </div>
+          ))}
+        </div>
+        <div style={{marginTop:20,fontSize:10,color:"#ccc",textAlign:"center",fontFamily:"'Roboto Mono',monospace",letterSpacing:".06em"}}>
+          clic fuera para cerrar
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── About Modal ─────────────────────────────────────────────────────────── */
+function AboutModal({onClose}){
+  const links=[
+    {icon:"in",label:"LinkedIn",url:"https://www.linkedin.com/in/julia-verheul-749990131/",color:"#0A66C2"},
+    {icon:"rg",label:"ResearchGate",url:"https://www.researchgate.net/profile/Julia-Verheul-Campos",color:"#00CCBB"},
+    {icon:"gh",label:"GitHub",url:"http://github.com/VerheulJ",color:"#24292F"},
+    {icon:"@",label:"julia.verheul@ibima.eu",url:"mailto:julia.verheul@ibima.eu",color:"#D94F27"},
+  ];
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.35)",
+      display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
+      <div style={{background:"#fff",borderRadius:12,padding:"28px 30px",width:480,maxWidth:"92vw",
+        boxShadow:"0 24px 80px rgba(0,0,0,0.15)"}} onClick={e=>e.stopPropagation()}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:22}}>
+          <h2 style={{fontSize:16,fontWeight:700,color:"#111",letterSpacing:"-.01em"}}>Sobre mí</h2>
+          <button onClick={onClose} style={{background:"#f5f5f5",border:"none",borderRadius:6,
+            cursor:"pointer",fontSize:16,fontWeight:700,color:"#666",width:28,height:28,
+            display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
+        </div>
+        <div style={{display:"flex",gap:20,alignItems:"flex-start",marginBottom:22}}>
+          <img
+            src="https://media.licdn.com/dms/image/v2/D4E03AQGpTKKheKLP2g/profile-displayphoto-crop_800_800/B4EZvlMsPzKYAI-/0/1769076872608?e=1778716800&v=beta&t=bT24ZBiGiNgdEEptmrCuzmpEd_iPTwmtqayEvhycCNY"
+            alt="Julia Verheul"
+            style={{width:80,height:80,borderRadius:"50%",objectFit:"cover",
+              flexShrink:0,border:"2px solid #f0f0f0"}}
+            onError={e=>{e.target.style.display="none";}}
+          />
+          <div>
+            <div style={{fontSize:16,fontWeight:700,color:"#111",marginBottom:4,letterSpacing:"-.01em"}}>
+              Julia Verheul
+            </div>
+            <div style={{fontSize:12.5,color:"#555",lineHeight:1.65,fontWeight:300}}>
+              Estudiante de doctorado en el grupo de <strong style={{fontWeight:500}}>Neuropsicofarmacología</strong> con el Dr. Fernando Rodríguez de Fonseca en <strong style={{fontWeight:500}}>IBIMA-Plataforma Bionand</strong>.
+            </div>
           </div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          {links.map((l,i)=>(
+            <a key={i} href={l.url} target={l.url.startsWith("mailto")?"_self":"_blank"} rel="noopener noreferrer"
+              style={{display:"flex",alignItems:"center",gap:12,padding:"9px 14px",
+                borderRadius:8,border:"1px solid #f0f0f0",background:"#fafafa",
+                textDecoration:"none",transition:"all .15s",color:"inherit"}}
+              onMouseEnter={e=>{e.currentTarget.style.background=`${l.color}0D`;e.currentTarget.style.borderColor=`${l.color}50`;}}
+              onMouseLeave={e=>{e.currentTarget.style.background="#fafafa";e.currentTarget.style.borderColor="#f0f0f0";}}>
+              <div style={{width:30,height:30,borderRadius:6,background:l.color,
+                display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <span style={{fontSize:11,fontWeight:700,color:"#fff",fontFamily:"'Roboto Mono',monospace",
+                  letterSpacing:"-.02em"}}>{l.icon}</span>
+              </div>
+              <span style={{fontSize:12.5,color:"#333",fontWeight:400}}>{l.label}</span>
+              <span style={{marginLeft:"auto",fontSize:11,color:"#ccc"}}>↗</span>
+            </a>
+          ))}
+        </div>
+        <div style={{marginTop:16,fontSize:10,color:"#ccc",textAlign:"center",fontFamily:"'Roboto Mono',monospace",letterSpacing:".06em"}}>
+          clic fuera para cerrar
         </div>
       </div>
     </div>
@@ -308,98 +360,112 @@ function AlcoholModal({ node, onClose }) {
 }
 
 /* ── Protein row ─────────────────────────────────────────────────────────── */
-function ProteinRow({p, nodeColor}) {
-  const dc = p.dir==="↑" ? "#0F9E55" : p.dir==="↓" ? "#D41A42" : "#999";
-  return (
-    <div style={{display:"flex",gap:8,alignItems:"flex-start",
-      borderLeft:`2px solid ${nodeColor}`,paddingLeft:9,
-      paddingTop:5,paddingBottom:5,marginBottom:2}}>
-      <span style={{color:dc,fontWeight:700,fontSize:15,minWidth:16,flexShrink:0,
-        fontFamily:"'DM Mono',monospace"}}>{p.dir}</span>
+function ProteinRow({p,nodeColor}){
+  const isUp=p.dir==="↑",isDown=p.dir==="↓";
+  const bgDir=isUp?"#E8F8EE":isDown?"#FDEAEA":"#F5F5F5";
+  const fgDir=isUp?"#0A7A3A":isDown?"#B01030":"#777";
+  return(
+    <div style={{display:"flex",gap:10,alignItems:"flex-start",
+      padding:"7px 0 7px 10px",borderLeft:`2px solid ${nodeColor}`,marginBottom:1}}>
+      <span style={{background:bgDir,color:fgDir,fontWeight:700,fontSize:12,
+        fontFamily:"'Roboto Mono',monospace",padding:"1px 6px",borderRadius:4,
+        flexShrink:0,marginTop:1,minWidth:28,textAlign:"center"}}>{p.dir}</span>
       <div style={{flex:1,minWidth:0}}>
-        <span style={{fontSize:12,fontWeight:600,color:nodeColor,fontFamily:"'DM Mono',monospace"}}>{p.gene}</span>
-        {(p.logFC!==null||p.pval!==null) && (
-          <span style={{fontSize:10,color:"#bbb",fontFamily:"'DM Mono',monospace",marginLeft:8}}>
-            {p.logFC!==null?`logFC ${p.logFC>0?"+":""}${p.logFC}`:""}
+        <span style={{fontSize:13,fontWeight:700,color:"#111",fontFamily:"'Roboto Mono',monospace",
+          letterSpacing:"-.01em"}}>{p.gene}</span>
+        {(p.logFC!==null||p.pval!==null)&&(
+          <span style={{fontSize:10,color:"#bbb",fontFamily:"'Roboto Mono',monospace",marginLeft:8,fontWeight:400}}>
+            {p.logFC!==null?`${p.logFC>0?"+":""}${p.logFC}`:""}
             {p.logFC!==null&&p.pval!==null?" · ":""}
             {p.pval!==null?`p=${p.pval}`:""}
           </span>
         )}
-        <div style={{fontSize:11.5,color:"#777",lineHeight:1.45,marginTop:2,fontFamily:"'DM Sans',sans-serif"}}>{p.note}</div>
+        <div style={{fontSize:11.5,color:"#888",lineHeight:1.45,marginTop:2,fontWeight:300}}>{p.note}</div>
       </div>
     </div>
   );
 }
 
+const Div=()=><div style={{height:1,background:"rgba(0,0,0,0.07)",margin:"14px 0"}}/>;
+
 /* ── Main App ────────────────────────────────────────────────────────────── */
-function App() {
-  const [sel, setSel]         = useState(null);
-  const [tab, setTab]         = useState("males");
-  const [showAlc, setShowAlc] = useState(false);
+function App(){
+  const[sel,setSel]=useState(null);
+  const[tab,setTab]=useState("males");
+  const[showAlc,setShowAlc]=useState(false);
+  const[showRefs,setShowRefs]=useState(false);
+  const[showAbout,setShowAbout]=useState(false);
 
-  const node        = sel ? NODES[sel] : null;
-  const activeEdges = sel ? EDGES.filter(e=>e.from===sel||e.to===sel) : [];
-  const connected   = new Set(activeEdges.flatMap(e=>[e.from,e.to]));
+  const node=sel?NODES[sel]:null;
+  const activeEdges=sel?EDGES.filter(e=>e.from===sel||e.to===sel):[];
+  const connected=new Set(activeEdges.flatMap(e=>[e.from,e.to]));
+  const connectedEdges=node?EDGES.filter(e=>e.from===sel||e.to===sel):[];
 
-  return (
-    <div style={{display:"flex",flexDirection:"column",height:"100vh",background:"#ffffff",color:"#111",overflow:"hidden",fontFamily:"'DM Sans',sans-serif"}}>
+  return(
+    <div style={{display:"flex",flexDirection:"column",height:"100vh",background:"#fff",
+      color:"#111",overflow:"hidden",fontFamily:"'Roboto',sans-serif",fontWeight:400}}>
       <style>{`
-        * { box-sizing:border-box; }
-        ::-webkit-scrollbar{width:5px}
-        ::-webkit-scrollbar-thumb{background:#e8e8e8;border-radius:3px}
+        *{box-sizing:border-box}
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#e4e4e4;border-radius:3px}
         .nd{cursor:pointer;transition:opacity .18s}
-        .tb{cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#888;
-            font-size:11px;padding:7px 16px;border-radius:20px;
-            font-family:'DM Mono',monospace;letter-spacing:.05em;transition:all .15s;font-weight:500}
-        .tb:hover{color:#333;border-color:#bbb;background:#f8f8f8}
+        .tb{cursor:pointer;border:1.5px solid #ddd;background:#f9f7f5;color:#777;
+            font-size:11px;padding:7px 18px;border-radius:20px;font-family:'Roboto',sans-serif;
+            font-weight:500;letter-spacing:.01em;transition:all .15s}
+        .tb:hover{background:#f0ede9;border-color:#bbb;color:#333}
         .tb.on{background:#111;color:#fff;border-color:#111;font-weight:600}
-        .ab{cursor:pointer;border:1.5px solid #C98500;background:#fff;color:#C98500;
-            font-size:11px;padding:7px 16px;border-radius:20px;
-            font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;
-            transition:all .15s;font-weight:600}
-        .ab:hover,.ab.on{background:#C9850012}
-        .nc{cursor:pointer;border:1.5px solid #f0f0f0;border-radius:8px;padding:10px 12px;
+        .ab{cursor:pointer;background:#f5f5f5;border:1.5px solid #e0e0e0;color:#555;
+            font-size:11px;padding:7px 16px;border-radius:20px;font-family:'Roboto Mono',monospace;
+            letter-spacing:.06em;text-transform:uppercase;font-weight:500;transition:all .15s}
+        .ab:hover{background:#ececec;border-color:#bbb}
+        .ab.on{background:#111;color:#fff;border-color:#111}
+        .hdr-btn{cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#555;
+            font-size:11px;padding:6px 14px;border-radius:20px;font-family:'Roboto',sans-serif;
+            font-weight:500;letter-spacing:.01em;transition:all .15s}
+        .hdr-btn:hover{background:#f5f5f5;border-color:#aaa;color:#222}
+        .nc{cursor:pointer;border:1.5px solid #efefef;border-radius:8px;padding:10px 12px;
             background:#fafafa;transition:all .15s}
-        .nc:hover{border-color:inherit;background:#f5f5f5}
-        @keyframes pulse{0%,100%{opacity:.45}50%{opacity:.88}}
+        @keyframes pulse{0%,100%{opacity:.45}50%{opacity:.9}}
         .hub{animation:pulse 3.5s ease-in-out infinite}
+        .back-btn{background:#fff;border:1.5px solid #e0e0e0;color:#555;padding:8px 20px;
+            border-radius:6px;cursor:pointer;font-family:'Roboto',sans-serif;font-size:13px;
+            font-weight:500;letter-spacing:.01em;transition:all .15s;display:inline-flex;
+            align-items:center;gap:6px;width:100%}
+        .back-btn:hover{background:#f5f5f5;border-color:#aaa;color:#222}
       `}</style>
 
-      {/* ── HEADER ──────────────────────────────────────────────────────── */}
-      <div style={{
-        borderBottom:"1.5px solid #f0f0f0", padding:"14px 28px",
-        display:"flex", alignItems:"center", gap:20,
-        flexShrink:0, background:"#fff",
-      }}>
+      {/* ── HEADER ─────────────────────────────────────────────────────── */}
+      <div style={{borderBottom:"1px solid rgba(0,0,0,0.1)",padding:"12px 28px",
+        display:"flex",alignItems:"center",gap:16,flexShrink:0,background:"#fff"}}>
         <div>
-          <div style={{fontSize:10,color:"#ccc",fontFamily:"'DM Mono',monospace",letterSpacing:".2em",textTransform:"uppercase",marginBottom:3}}>
+          <div style={{fontSize:9,color:"#bbb",fontFamily:"'Roboto Mono',monospace",
+            letterSpacing:".2em",textTransform:"uppercase",marginBottom:3}}>
             Mapa Interactivo · Hipocampo
           </div>
-          <h1 style={{margin:0,fontSize:18,fontWeight:800,color:"#111",fontFamily:"'Syne',sans-serif",letterSpacing:"-.01em"}}>
+          <h1 style={{margin:0,fontSize:19,fontWeight:700,color:"#111",letterSpacing:"-.02em",lineHeight:1.1}}>
             Desregulación Proteómica por Alcohol
           </h1>
         </div>
-        <div style={{marginLeft:"auto",display:"flex",gap:8,alignItems:"center"}}>
-          {[["7","vías"],["11","conexiones"],["2","sexos"]].map(([n,l])=>(
-            <div key={l} style={{
-              background:"#f5f5f5", border:"1px solid #e8e8e8",
-              borderRadius:20, padding:"4px 12px",
-              display:"flex", alignItems:"center", gap:5,
-            }}>
-              <span style={{fontSize:13,fontWeight:700,color:"#111",fontFamily:"'Syne',sans-serif"}}>{n}</span>
-              <span style={{fontSize:10,color:"#aaa",fontFamily:"'DM Mono',monospace",letterSpacing:".05em"}}>{l}</span>
+        <div style={{marginLeft:"auto",display:"flex",gap:7,alignItems:"center"}}>
+          {[["7","vías","#EEF3FB"],["11","conexiones","#F0EBF9"],["2","sexos","#F0F9F3"]].map(([n,l,bg])=>(
+            <div key={l} style={{background:bg,border:"1px solid rgba(0,0,0,0.08)",borderRadius:20,
+              padding:"5px 13px",display:"flex",alignItems:"center",gap:5}}>
+              <span style={{fontSize:13,fontWeight:700,color:"#111",fontFamily:"'Roboto Mono',monospace"}}>{n}</span>
+              <span style={{fontSize:10,color:"#888",letterSpacing:".04em"}}>{l}</span>
             </div>
           ))}
+          <div style={{width:1,height:20,background:"#e8e8e8",margin:"0 4px"}}/>
+          <button className="hdr-btn" onClick={()=>setShowRefs(true)}>Referencias</button>
+          <button className="hdr-btn" onClick={()=>setShowAbout(true)}>Sobre mí</button>
         </div>
       </div>
 
-      {/* ── BODY ────────────────────────────────────────────────────────── */}
+      {/* ── BODY ───────────────────────────────────────────────────────── */}
       <div style={{display:"flex",flex:1,minHeight:0}}>
 
         {/* MAP */}
         <div style={{flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",
-          padding:"12px 8px 12px 12px",borderRight:"1.5px solid #f0f0f0",
-          background:"#fdfdfd",overflowX:"auto"}}>
+          padding:"12px 8px 12px 12px",borderRight:"1px solid rgba(0,0,0,0.15)",
+          background:"#fdfcfb",overflowX:"auto"}}>
           <svg viewBox={`0 0 ${VW} ${VH}`} width={VW} height={VH} style={{display:"block"}}>
             <defs>
               {EDGES.map((e,i)=>(
@@ -409,20 +475,16 @@ function App() {
               ))}
               {Object.values(NODES).map(n=>(
                 <radialGradient key={n.id} id={`g${n.id}`} cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor={n.color} stopOpacity=".14"/>
+                  <stop offset="0%" stopColor={n.color} stopOpacity=".13"/>
                   <stop offset="100%" stopColor={n.color} stopOpacity=".02"/>
                 </radialGradient>
               ))}
             </defs>
-
-            {/* Edges — uniform 2px, pill label backgrounds */}
             {EDGES.map((e,i)=>{
-              const a=NODES[e.from], b=NODES[e.to];
-              const p=edgePts(a,b);
-              const active=activeEdges.includes(e);
-              const dim=sel&&!active;
-              const lw = p.label ? p.label.length * 5.5 + 16 : 0;
-              return (
+              const a=NODES[e.from],b=NODES[e.to],p=edgePts(a,b);
+              const active=activeEdges.includes(e),dim=sel&&!active;
+              const lw=e.label.length*5.4+18;
+              return(
                 <g key={i} opacity={dim?.06:active?1:.38}>
                   <line x1={p.x1} y1={p.y1} x2={p.x2} y2={p.y2}
                     stroke={e.color} strokeWidth={2}
@@ -430,10 +492,10 @@ function App() {
                     markerEnd={`url(#a${i})`}/>
                   {active&&(
                     <g>
-                      <rect x={p.mx - lw/2} y={p.my-18} width={lw} height={16}
-                        rx={8} fill="white" stroke={e.color} strokeWidth="1.2" opacity=".95"/>
-                      <text x={p.mx} y={p.my-7} textAnchor="middle" fontSize="9"
-                        fill={e.color} style={{fontFamily:"'DM Mono',monospace",fontWeight:600}}>
+                      <rect x={p.mx-lw/2} y={p.my-17} width={lw} height={15}
+                        rx={7.5} fill="white" stroke={e.color} strokeWidth="1.2" opacity=".96"/>
+                      <text x={p.mx} y={p.my-6.5} textAnchor="middle" fontSize="8.5"
+                        fill={e.color} style={{fontFamily:"'Roboto Mono',monospace",fontWeight:600}}>
                         {e.label}
                       </text>
                     </g>
@@ -441,41 +503,29 @@ function App() {
                 </g>
               );
             })}
-
-            {/* Alcohol hub */}
             <g className="hub">
-              <circle cx={430} cy={310} r={36} fill="#FFF9EC"
-                stroke="#C98500" strokeWidth="1.8"/>
-              <text x={430} y={306} textAnchor="middle" fontSize="11"
-                fill="#C98500" style={{fontFamily:"'DM Mono',monospace",letterSpacing:".14em",fontWeight:600}}>EtOH</text>
-              <text x={430} y={321} textAnchor="middle" fontSize="8.5"
-                fill="#a06800" style={{fontFamily:"'DM Mono',monospace",letterSpacing:".1em"}}>ALCOHOL</text>
+              <circle cx={430} cy={310} r={36} fill="#FFFBF0" stroke="#C47F00" strokeWidth="1.8"/>
+              <text x={430} y={306} textAnchor="middle" fontSize="11" fill="#C47F00"
+                style={{fontFamily:"'Roboto Mono',monospace",letterSpacing:".14em",fontWeight:600}}>EtOH</text>
+              <text x={430} y={321} textAnchor="middle" fontSize="8.5" fill="#9a6200"
+                style={{fontFamily:"'Roboto Mono',monospace",letterSpacing:".1em"}}>ALCOHOL</text>
             </g>
-
-            {/* Nodes — all solid borders, unified style */}
             {Object.values(NODES).map(n=>{
-              const isSel=sel===n.id;
-              const dim=sel&&!connected.has(n.id);
-              return (
-                <g key={n.id} className="nd" opacity={dim?.14:1}
+              const isSel=sel===n.id,dim=sel&&!connected.has(n.id);
+              return(
+                <g key={n.id} className="nd" opacity={dim?.13:1}
                   onClick={()=>{setSel(sel===n.id?null:n.id);setTab("males");setShowAlc(false);}}>
-                  {isSel&&<circle cx={n.cx} cy={n.cy} r={R+14} fill="none"
-                    stroke={n.color} strokeWidth="2" opacity=".3"/>}
+                  {isSel&&<circle cx={n.cx} cy={n.cy} r={R+14} fill="none" stroke={n.color} strokeWidth="2" opacity=".25"/>}
                   <circle cx={n.cx} cy={n.cy} r={R} fill={`url(#g${n.id})`}/>
-                  {/* solid border, same weight all, thicker when selected */}
-                  <circle cx={n.cx} cy={n.cy} r={R} fill="none"
-                    stroke={n.color} strokeWidth={isSel?3:1.8}/>
-                  {/* abbr — primary label, full opacity */}
-                  <text x={n.cx} y={n.cy-7}
-                    textAnchor="middle" fontSize="12" fill={n.color}
-                    style={{fontFamily:"'DM Mono',monospace",fontWeight:600,letterSpacing:".03em"}}>
+                  <circle cx={n.cx} cy={n.cy} r={R} fill="none" stroke={n.color} strokeWidth={isSel?3:1.8}/>
+                  <text x={n.cx} y={n.cy-7} textAnchor="middle" fontSize="12" fill={n.color}
+                    style={{fontFamily:"'Roboto Mono',monospace",fontWeight:600,letterSpacing:".02em"}}>
                     {n.abbr}
                   </text>
-                  {/* subtitle — reduced opacity for hierarchy */}
                   {n.label.map((l,li)=>(
-                    <text key={li} x={n.cx} y={n.cy+9+(li*12)}
-                      textAnchor="middle" fontSize="8" fill={n.color}
-                      style={{fontFamily:"'DM Mono',monospace",opacity:.45,letterSpacing:".02em"}}>
+                    <text key={li} x={n.cx} y={n.cy+9+(li*12)} textAnchor="middle"
+                      fontSize="7.5" fill={n.color}
+                      style={{fontFamily:"'Roboto Mono',monospace",opacity:.40,letterSpacing:".02em"}}>
                       {l}
                     </text>
                   ))}
@@ -485,135 +535,131 @@ function App() {
           </svg>
         </div>
 
-        {/* DETAIL PANEL */}
-        <div style={{flex:1,minWidth:270,overflowY:"auto",padding:"20px 22px",display:"flex",flexDirection:"column",gap:14}}>
+        {/* ── DETAIL PANEL — flex column with scrollable middle ────────── */}
+        <div style={{flex:1,minWidth:280,display:"flex",flexDirection:"column",overflow:"hidden"}}>
 
-          {!node ? (
-            <div>
-              <p style={{fontSize:12,color:"#bbb",fontStyle:"italic",lineHeight:1.75,marginBottom:20}}>
-                Selecciona un nodo para ver proteínas desreguladas, logFC, p-valores y nexo con el alcohol.
+          {!node?(
+            /* No selection — full scroll */
+            <div style={{flex:1,overflowY:"auto",padding:"22px 24px"}}>
+              <p style={{fontSize:12.5,color:"#aaa",fontStyle:"italic",lineHeight:1.75,marginBottom:22,fontWeight:300}}>
+                Selecciona un nodo para explorar proteínas desreguladas, logFC, p-valores y nexo con el alcohol.
               </p>
-              <p style={{fontSize:9,color:"#ccc",fontFamily:"'DM Mono',monospace",letterSpacing:".14em",textTransform:"uppercase",marginBottom:12}}>
-                Vías del mapa
-              </p>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+              <div style={{fontSize:9,color:"#bbb",fontFamily:"'Roboto Mono',monospace",
+                letterSpacing:".16em",textTransform:"uppercase",marginBottom:14}}>Vías del mapa</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9}}>
                 {Object.values(NODES).map(n=>(
-                  <div key={n.id} className="nc" style={{borderColor:`${n.color}35`}}
+                  <div key={n.id} className="nc" style={{borderColor:`${n.color}30`}}
                     onClick={()=>{setSel(n.id);setTab("males");setShowAlc(false);}}
-                    onMouseEnter={e=>{ e.currentTarget.style.background=`${n.color}0C`; e.currentTarget.style.borderColor=n.color+"60"; }}
-                    onMouseLeave={e=>{ e.currentTarget.style.background="#fafafa"; e.currentTarget.style.borderColor=`${n.color}35`; }}>
+                    onMouseEnter={e=>{e.currentTarget.style.background=`${n.color}0A`;e.currentTarget.style.borderColor=`${n.color}55`;}}
+                    onMouseLeave={e=>{e.currentTarget.style.background="#fafafa";e.currentTarget.style.borderColor=`${n.color}30`;}}>
                     <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:4}}>
-                      <div style={{width:9,height:9,borderRadius:"50%",background:n.color,flexShrink:0}}/>
-                      <span style={{fontSize:11,color:n.color,fontWeight:700,fontFamily:"'Syne',sans-serif"}}>
-                        {n.label.join(" ")}
-                      </span>
+                      <div style={{width:8,height:8,borderRadius:"50%",background:n.color,flexShrink:0}}/>
+                      <span style={{fontSize:11.5,color:n.color,fontWeight:700,letterSpacing:"-.01em"}}>{n.label.join(" ")}</span>
                     </div>
-                    <p style={{margin:0,fontSize:10,color:"#999",lineHeight:1.45}}>
-                      {n.desc.slice(0,72)}…
+                    <p style={{margin:0,fontSize:10.5,color:"#999",lineHeight:1.45,fontWeight:300}}>
+                      {n.desc.slice(0,70)}…
                     </p>
                   </div>
                 ))}
               </div>
             </div>
-          ) : (
+          ):(
             <>
-              <div style={{paddingBottom:14,borderBottom:"1.5px solid #f0f0f0"}}>
-                <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:6}}>
-                  <div style={{width:11,height:11,borderRadius:"50%",background:node.color,flexShrink:0}}/>
-                  <h2 style={{margin:0,fontSize:17,color:node.color,fontWeight:800,fontFamily:"'Syne',sans-serif"}}>
+              {/* TOP: node title + tabs — fixed */}
+              <div style={{flexShrink:0,padding:"18px 24px 0",borderBottom:"1px solid rgba(0,0,0,0.07)"}}>
+                <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:5}}>
+                  <div style={{width:10,height:10,borderRadius:"50%",background:node.color,flexShrink:0}}/>
+                  <h2 style={{margin:0,fontSize:17,color:node.color,fontWeight:700,letterSpacing:"-.02em"}}>
                     {node.label.join(" ")}
                   </h2>
                 </div>
-                <p style={{margin:0,fontSize:12,color:"#888",lineHeight:1.6}}>
-                  {node.desc}
-                </p>
+                <p style={{margin:"0 0 14px",fontSize:12,color:"#888",lineHeight:1.6,fontWeight:300}}>{node.desc}</p>
+                <div style={{display:"flex",gap:7,alignItems:"center",flexWrap:"wrap",paddingBottom:14}}>
+                  <button className={`tb ${tab==="males"?"on":""}`} onClick={()=>setTab("males")}>
+                    ♂ Machos ({node.males.length})
+                  </button>
+                  <button className={`tb ${tab==="females"?"on":""}`} onClick={()=>setTab("females")}>
+                    ♀ Hembras ({node.females.length})
+                  </button>
+                  <button className={`ab ${showAlc?"on":""}`} style={{marginLeft:"auto"}}
+                    onClick={()=>setShowAlc(!showAlc)}>
+                    Nexo alcohol
+                  </button>
+                </div>
               </div>
 
-              <div style={{display:"flex",gap:7,alignItems:"center",flexWrap:"wrap"}}>
-                <button className={`tb ${tab==="males"?"on":""}`} onClick={()=>setTab("males")}>
-                  ♂ Machos ({node.males.length})
-                </button>
-                <button className={`tb ${tab==="females"?"on":""}`} onClick={()=>setTab("females")}>
-                  ♀ Hembras ({node.females.length})
-                </button>
-                <button className={`ab ${showAlc?"on":""}`} style={{marginLeft:"auto"}}
-                  onClick={()=>setShowAlc(!showAlc)}>
-                  Nexo alcohol
-                </button>
-              </div>
-
-              <div style={{display:"flex",flexDirection:"column",gap:1}}>
+              {/* MIDDLE: protein list — scrollable */}
+              <div style={{flex:1,overflowY:"auto",padding:"12px 24px 8px"}}>
                 {(tab==="males"?node.males:node.females).map((p,i)=>(
                   <ProteinRow key={i} p={p} nodeColor={node.color}/>
                 ))}
               </div>
 
-              <div>
-                <p style={{margin:"0 0 9px",fontSize:9,color:"#ccc",fontFamily:"'DM Mono',monospace",letterSpacing:".12em",textTransform:"uppercase"}}>
+              {/* BOTTOM: connected pathways + back — fixed */}
+              <div style={{flexShrink:0,borderTop:"1px solid rgba(0,0,0,0.07)",
+                padding:"14px 24px 16px",background:"#fff"}}>
+                <div style={{fontSize:9,color:"#bbb",fontFamily:"'Roboto Mono',monospace",
+                  letterSpacing:".16em",textTransform:"uppercase",marginBottom:10}}>
                   Vías conectadas
-                </p>
-                {EDGES.filter(e=>e.from===sel||e.to===sel).map((e,i)=>{
+                </div>
+                {connectedEdges.map((e,i)=>{
                   const otherId=e.from===sel?e.to:e.from;
                   const other=NODES[otherId];
                   const dir=e.from===sel?"→":"←";
-                  return (
-                    <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:7,cursor:"pointer"}}
+                  return(
+                    <div key={i} style={{display:"flex",alignItems:"center",gap:8,
+                      marginBottom:7,cursor:"pointer"}}
                       onClick={()=>{setSel(otherId);setTab("males");setShowAlc(false);}}>
                       <div style={{width:7,height:7,borderRadius:"50%",background:e.color,flexShrink:0}}/>
-                      <span style={{fontSize:12,color:e.color,fontFamily:"'DM Mono',monospace",fontWeight:600}}>{dir}</span>
-                      <span style={{fontSize:13,color:other.color,fontWeight:700,fontFamily:"'Syne',sans-serif"}}>{other.label.join(" ")}</span>
-                      <span style={{fontSize:11,color:"#bbb"}}>· {e.label}</span>
+                      <span style={{fontSize:12,color:e.color,fontFamily:"'Roboto Mono',monospace",
+                        fontWeight:600,flexShrink:0}}>{dir}</span>
+                      <span style={{fontSize:13,color:other.color,fontWeight:700,flexShrink:0,
+                        letterSpacing:"-.01em"}}>{other.label.join(" ")}</span>
+                      <span style={{fontSize:11,color:"#bbb",fontWeight:300,overflow:"hidden",
+                        textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.label}</span>
                     </div>
                   );
                 })}
+                <div style={{height:1,background:"rgba(0,0,0,0.07)",margin:"12px 0"}}/>
+                <button className="back-btn" onClick={()=>{setSel(null);setShowAlc(false);}}>
+                  <span style={{fontSize:14,lineHeight:1}}>←</span>
+                  <span>Volver al mapa</span>
+                </button>
               </div>
-
-              <button onClick={()=>{setSel(null);setShowAlc(false);}}
-                style={{
-                  alignSelf:"flex-start", background:"#fff",
-                  border:"2px solid #e0e0e0", color:"#444",
-                  padding:"12px 32px", cursor:"pointer",
-                  fontFamily:"'Syne',sans-serif", fontSize:14, fontWeight:700,
-                  borderRadius:8, letterSpacing:".01em", marginTop:4,
-                  transition:"all .15s",
-                }}
-                onMouseEnter={e=>{e.target.style.background="#f5f5f5";e.target.style.borderColor="#bbb";}}
-                onMouseLeave={e=>{e.target.style.background="#fff";e.target.style.borderColor="#e0e0e0";}}
-              >
-                ← Volver al mapa
-              </button>
             </>
           )}
         </div>
       </div>
 
-      {/* ── FOOTER / LEGEND ──────────────────────────────────────────────── */}
-      <div style={{
-        borderTop:"1.5px solid #f0f0f0", padding:"10px 28px",
-        display:"flex", gap:24, alignItems:"center", flexShrink:0, background:"#fff",
-      }}>
+      {/* ── FOOTER / LEGEND ────────────────────────────────────────────── */}
+      <div style={{borderTop:"1px solid rgba(0,0,0,0.1)",padding:"11px 28px",
+        display:"flex",gap:24,alignItems:"center",flexShrink:0,background:"#fff"}}>
         {[
-          {dir:"↑", label:"sobreexpresado", color:"#0F9E55"},
-          {dir:"↓", label:"infraexpresado",  color:"#D41A42"},
-          {dir:"~", label:"fosfoproteómica", color:"#aaa"},
-        ].map(({dir,label,color})=>(
-          <div key={dir} style={{display:"flex",alignItems:"center",gap:7}}>
-            <span style={{fontSize:16,fontWeight:700,color,fontFamily:"'DM Mono',monospace",lineHeight:1}}>{dir}</span>
-            <span style={{fontSize:11,color:"#aaa",fontFamily:"'DM Sans',sans-serif"}}>{label}</span>
+          {dir:"↑",label:"Sobreexpresado",bg:"#E8F8EE",fg:"#0A7A3A"},
+          {dir:"↓",label:"Infraexpresado",bg:"#FDEAEA",fg:"#B01030"},
+          {dir:"~",label:"Fosfoproteómica",bg:"#F3F3F3",fg:"#777"},
+        ].map(({dir,label,bg,fg})=>(
+          <div key={dir} style={{display:"flex",alignItems:"center",gap:8}}>
+            <span style={{background:bg,color:fg,fontWeight:700,fontSize:13,
+              fontFamily:"'Roboto Mono',monospace",padding:"2px 8px",borderRadius:5,lineHeight:1.4}}>
+              {dir}
+            </span>
+            <span style={{fontSize:12,color:"#888",fontWeight:400}}>{label}</span>
           </div>
         ))}
-        <span style={{marginLeft:"auto",fontSize:10,color:"#ccc",fontFamily:"'DM Mono',monospace",letterSpacing:".06em"}}>
-          clic en nodo → detalle · clic de nuevo → deseleccionar
-        </span>
+        <span style={{marginLeft:"auto",fontSize:10,color:"#ccc",fontFamily:"'Roboto Mono',monospace",
+          letterSpacing:".05em"}}>clic en nodo → detalle</span>
       </div>
 
-      {showAlc && node && <AlcoholModal node={node} onClose={()=>setShowAlc(false)}/>}
+      {showAlc&&node&&<AlcoholModal node={node} onClose={()=>setShowAlc(false)}/>}
+      {showRefs&&<RefsModal onClose={()=>setShowRefs(false)}/>}
+      {showAbout&&<AboutModal onClose={()=>setShowAbout(false)}/>}
     </div>
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+const root=ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App/>);
 </script>
 </body>
 </html>
