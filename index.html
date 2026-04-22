@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: #0e0f16; }
+    html, body { height: 100%; background: #0a0b10; }
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-thumb { background: #252636; border-radius: 3px; }
   </style>
@@ -20,15 +20,14 @@
 <script type="text/babel">
 const { useState } = React;
 
-/* Colores: saturación media, luminosidad media — visibles sobre fondo oscuro */
 const C = {
-  glutGABA:     "#d4784a",   /* terracota */
-  calcium:      "#5a8ec8",   /* azul acero */
-  vesicles:     "#8870c8",   /* violeta */
-  cytoskeleton: "#4aaa6a",   /* verde */
-  mitochondria: "#c89a2a",   /* ámbar */
-  oxphos:       "#c04460",   /* granate */
-  ribosomes:    "#3aaeae",   /* teal */
+  glutGABA:     "#ff7040",
+  calcium:      "#4aa8ff",
+  vesicles:     "#aa70ff",
+  cytoskeleton: "#30e878",
+  mitochondria: "#ffbe00",
+  oxphos:       "#ff3060",
+  ribosomes:    "#00dcd0",
 };
 
 const NODES = {
@@ -143,15 +142,15 @@ const NODES = {
     color:C.mitochondria, cx:145, cy:135,
     desc:"Alteraciones metabólicas más extensas en machos. Cubre glucólisis, ciclo TCA, β-oxidación, cetogénesis y mielinización.",
     males:[
-      {gene:"HK1",    dir:"↑", logFC:0.31,  pval:0.018, note:"Fosforilación inicial glucosa"},
-      {gene:"GPI",    dir:"↑", logFC:null,  pval:null,  note:"G6P → F6P (glucólisis)"},
-      {gene:"PFKL",   dir:"↓", logFC:-0.43, pval:0.027, note:"Enzima limitante glucólisis → desvío Glu"},
-      {gene:"IDH3A",  dir:"↑", logFC:null,  pval:null,  note:"TCA acelerado"},
-      {gene:"MDH2",   dir:"↑", logFC:0.53,  pval:0.024, note:"Homeostasis TCA"},
-      {gene:"SDHB",   dir:"↓", logFC:-0.29, pval:0.002, note:"Complejo II; acumulación succinato"},
-      {gene:"ECH1",   dir:"↑", logFC:null,  pval:null,  note:"β-oxidación ácidos grasos"},
-      {gene:"HMGCS2", dir:"↑", logFC:null,  pval:null,  note:"Cetogénesis / mevalonato"},
-      {gene:"FDPS",   dir:"↑", logFC:0.33,  pval:0.030, note:"Ruta mevalonato → colesterol → mielina"},
+      {gene:"HK1",    dir:"↑", logFC:0.31,  pval:0.018,   note:"Fosforilación inicial glucosa"},
+      {gene:"GPI",    dir:"↑", logFC:null,  pval:null,    note:"G6P → F6P (glucólisis)"},
+      {gene:"PFKL",   dir:"↓", logFC:-0.43, pval:0.027,   note:"Enzima limitante glucólisis → desvío Glu"},
+      {gene:"IDH3A",  dir:"↑", logFC:null,  pval:null,    note:"TCA acelerado"},
+      {gene:"MDH2",   dir:"↑", logFC:0.53,  pval:0.024,   note:"Homeostasis TCA"},
+      {gene:"SDHB",   dir:"↓", logFC:-0.29, pval:0.002,   note:"Complejo II; acumulación succinato"},
+      {gene:"ECH1",   dir:"↑", logFC:null,  pval:null,    note:"β-oxidación ácidos grasos"},
+      {gene:"HMGCS2", dir:"↑", logFC:null,  pval:null,    note:"Cetogénesis / mevalonato"},
+      {gene:"FDPS",   dir:"↑", logFC:0.33,  pval:0.030,   note:"Ruta mevalonato → colesterol → mielina"},
     ],
     females:[
       {gene:"PGAM1",    dir:"↓", logFC:null,  pval:null,    note:"Bloqueo selectivo glucólisis"},
@@ -170,17 +169,17 @@ const NODES = {
     color:C.oxphos, cx:430, cy:480,
     desc:"Remodelación de subunidades de complejos I–V. Más extensa en hembras. Consecuencia aguas abajo de Ca²⁺ y metabolismo mitocondrial.",
     males:[
-      {gene:"NDUFS4", dir:"↑", logFC:null,  pval:null,  note:"Complejo I; estabilización estructural"},
-      {gene:"NDUFS6", dir:"↑", logFC:0.96,  pval:0.027, note:"Complejo I"},
-      {gene:"NDUFA5", dir:"↑", logFC:0.46,  pval:0.027, note:"Complejo I; brazo hidrofílico accesorio"},
-      {gene:"SDHB",   dir:"↓", logFC:-0.29, pval:0.003, note:"Complejo II"},
-      {gene:"COX4I1", dir:"↓", logFC:null,  pval:null,  note:"Complejo IV; overlap Alzheimer"},
-      {gene:"COX5A",  dir:"↓", logFC:-0.29, pval:0.010, note:"Complejo IV; overlap Alzheimer"},
-      {gene:"MT-CO2", dir:"↓", logFC:-0.69, pval:0.028, note:"Complejo IV; subunidad catalítica"},
-      {gene:"COX5B",  dir:"↑", logFC:0.77,  pval:0.045, note:"Complejo IV; reestructuración compensatoria"},
-      {gene:"ATP5IF1",dir:"↑", logFC:null,  pval:null,  note:"ATP sintasa; +168% vs control"},
-      {gene:"ATP5PF", dir:"↑", logFC:0.55,  pval:0.037, note:"ATP sintasa; tallo periférico F₁-F₀"},
-      {gene:"ATP5PD", dir:"↑", logFC:0.34,  pval:0.023, note:"ATP sintasa; tallo periférico"},
+      {gene:"NDUFS4", dir:"↑", logFC:null,  pval:null,    note:"Complejo I; estabilización estructural"},
+      {gene:"NDUFS6", dir:"↑", logFC:0.96,  pval:0.027,   note:"Complejo I"},
+      {gene:"NDUFA5", dir:"↑", logFC:0.46,  pval:0.027,   note:"Complejo I; brazo hidrofílico accesorio"},
+      {gene:"SDHB",   dir:"↓", logFC:-0.29, pval:0.003,   note:"Complejo II"},
+      {gene:"COX4I1", dir:"↓", logFC:null,  pval:null,    note:"Complejo IV; overlap Alzheimer"},
+      {gene:"COX5A",  dir:"↓", logFC:-0.29, pval:0.010,   note:"Complejo IV; overlap Alzheimer"},
+      {gene:"MT-CO2", dir:"↓", logFC:-0.69, pval:0.028,   note:"Complejo IV; subunidad catalítica"},
+      {gene:"COX5B",  dir:"↑", logFC:0.77,  pval:0.045,   note:"Complejo IV; compensatorio"},
+      {gene:"ATP5IF1",dir:"↑", logFC:null,  pval:null,    note:"ATP sintasa; +168% vs control"},
+      {gene:"ATP5PF", dir:"↑", logFC:0.55,  pval:0.037,   note:"ATP sintasa; tallo periférico F₁-F₀"},
+      {gene:"ATP5PD", dir:"↑", logFC:0.34,  pval:0.023,   note:"ATP sintasa; tallo periférico"},
     ],
     females:[
       {gene:"NDUFS4",  dir:"↑", logFC:null, pval:null,    note:"Complejo I; estructural"},
@@ -225,17 +224,17 @@ const NODES = {
 };
 
 const EDGES = [
-  {from:"glutGABA",    to:"calcium",       label:"NMDA → Ca²⁺",           color:"#8870c0"},
-  {from:"calcium",     to:"vesicles",      label:"exocitosis Ca²⁺",        color:"#4878b8"},
-  {from:"calcium",     to:"cytoskeleton",  label:"GSN Ca²⁺-dep.",          color:"#3a9860"},
-  {from:"glutGABA",    to:"mitochondria",  label:"Glu → catabolismo",      color:"#c08828"},
-  {from:"mitochondria",to:"oxphos",        label:"TCA → OXPHOS",           color:"#b03858"},
-  {from:"vesicles",    to:"oxphos",        label:"demanda ATP",             color:"#6858a8"},
-  {from:"cytoskeleton",to:"vesicles",      label:"actina endocítica",       color:"#2a9888"},
-  {from:"oxphos",      to:"ribosomes",     label:"ATP → traducción",        color:"#b07030"},
-  {from:"ribosomes",   to:"cytoskeleton",  label:"proteínas estructurales", color:"#2898a8"},
-  {from:"glutGABA",    to:"vesicles",      label:"reciclaje NT",            color:"#c04848"},
-  {from:"mitochondria",to:"cytoskeleton",  label:"tau / energía",           color:"#48a858"},
+  {from:"glutGABA",    to:"calcium",       label:"NMDA → Ca²⁺",           color:"#aa70ff"},
+  {from:"calcium",     to:"vesicles",      label:"exocitosis Ca²⁺",        color:"#4aa8ff"},
+  {from:"calcium",     to:"cytoskeleton",  label:"GSN Ca²⁺-dep.",          color:"#30e878"},
+  {from:"glutGABA",    to:"mitochondria",  label:"Glu → catabolismo",      color:"#ffbe00"},
+  {from:"mitochondria",to:"oxphos",        label:"TCA → OXPHOS",           color:"#ff3060"},
+  {from:"vesicles",    to:"oxphos",        label:"demanda ATP",             color:"#aa70ff"},
+  {from:"cytoskeleton",to:"vesicles",      label:"actina endocítica",       color:"#00dcd0"},
+  {from:"oxphos",      to:"ribosomes",     label:"ATP → traducción",        color:"#ff7040"},
+  {from:"ribosomes",   to:"cytoskeleton",  label:"proteínas estructurales", color:"#00dcd0"},
+  {from:"glutGABA",    to:"vesicles",      label:"reciclaje NT",            color:"#ff7040"},
+  {from:"mitochondria",to:"cytoskeleton",  label:"tau / energía",           color:"#30e878"},
 ];
 
 const R = 52;
@@ -248,10 +247,10 @@ function edgePts(a, b) {
 }
 
 function ProteinRow({p, nodeColor}) {
-  const dc = p.dir==="↑" ? "#5aaa70" : p.dir==="↓" ? "#cc6060" : "#777";
+  const dc = p.dir==="↑" ? "#30e878" : p.dir==="↓" ? "#ff5050" : "#888";
   return (
     <div style={{display:"flex",gap:8,alignItems:"flex-start",
-      borderLeft:`2px solid ${nodeColor}60`,paddingLeft:8,
+      borderLeft:`2px solid ${nodeColor}`,paddingLeft:8,
       paddingTop:4,paddingBottom:4,marginBottom:2}}>
       <span style={{color:dc,fontWeight:700,fontSize:14,minWidth:14,flexShrink:0,
         fontFamily:"'IBM Plex Mono',monospace"}}>{p.dir}</span>
@@ -259,13 +258,13 @@ function ProteinRow({p, nodeColor}) {
         <span style={{fontSize:12,fontWeight:600,color:nodeColor,
           fontFamily:"'IBM Plex Mono',monospace"}}>{p.gene}</span>
         {(p.logFC!==null||p.pval!==null) && (
-          <span style={{fontSize:10,color:"#4a4a5a",fontFamily:"'IBM Plex Mono',monospace",marginLeft:8}}>
+          <span style={{fontSize:10,color:"#555",fontFamily:"'IBM Plex Mono',monospace",marginLeft:8}}>
             {p.logFC!==null?`logFC ${p.logFC>0?"+":""}${p.logFC}`:""}
             {p.logFC!==null&&p.pval!==null?" · ":""}
             {p.pval!==null?`p=${p.pval}`:""}
           </span>
         )}
-        <div style={{fontSize:11,color:"#666",lineHeight:1.4,marginTop:1,
+        <div style={{fontSize:11,color:"#888",lineHeight:1.4,marginTop:1,
           fontFamily:"'IBM Plex Sans',sans-serif"}}>{p.note}</div>
       </div>
     </div>
@@ -286,37 +285,37 @@ function App() {
 
   return (
     <div style={{display:"flex",flexDirection:"column",height:"100vh",
-      background:"#0e0f16",color:"#c8c5bc",fontFamily:sans,overflow:"hidden"}}>
+      background:"#0a0b10",color:"#ddd8cc",fontFamily:sans,overflow:"hidden"}}>
 
       <style>{`
         *{box-sizing:border-box}
         ::-webkit-scrollbar{width:4px}
         ::-webkit-scrollbar-thumb{background:#202130;border-radius:2px}
         .nd{cursor:pointer;transition:opacity .15s}
-        .tb{cursor:pointer;border:1px solid #252636;background:transparent;color:#666;
+        .tb{cursor:pointer;border:1px solid #2a2b3a;background:transparent;color:#666;
             font-size:10px;padding:5px 14px;border-radius:2px;font-family:'IBM Plex Mono',monospace;
             letter-spacing:.07em;transition:all .15s}
-        .tb:hover{color:#bbb;border-color:#444}
-        .tb.on{background:#141520;color:#c8c5bc;border-color:#444}
-        .ab{cursor:pointer;border:1px solid #c89a2a55;background:transparent;color:#a07820;
+        .tb:hover{color:#ccc;border-color:#555}
+        .tb.on{background:#141520;color:#ddd8cc;border-color:#555}
+        .ab{cursor:pointer;border:1px solid #ffbe0066;background:transparent;color:#ffbe00;
             font-size:10px;padding:5px 13px;border-radius:2px;font-family:'IBM Plex Mono',monospace;
             letter-spacing:.07em;text-transform:uppercase;transition:all .15s}
-        .ab:hover,.ab.on{background:#c89a2a18;border-color:#c89a2a}
+        .ab:hover,.ab.on{background:#ffbe0018;border-color:#ffbe00}
         .nc{cursor:pointer;border:1px solid #1e1f2e;border-radius:3px;padding:8px 10px;transition:background .12s}
-        @keyframes pulse{0%,100%{opacity:.35}50%{opacity:.7}}
-        .hub{animation:pulse 4s ease-in-out infinite}
+        @keyframes pulse{0%,100%{opacity:.4}50%{opacity:.85}}
+        .hub{animation:pulse 3.5s ease-in-out infinite}
       `}</style>
 
       {/* HEADER */}
       <div style={{borderBottom:"1px solid #151620",padding:"9px 22px",
         display:"flex",alignItems:"center",gap:14,flexShrink:0}}>
-        <span style={{fontSize:9,color:"#282938",fontFamily:mono,letterSpacing:".22em",textTransform:"uppercase"}}>
+        <span style={{fontSize:9,color:"#333",fontFamily:mono,letterSpacing:".22em",textTransform:"uppercase"}}>
           Mapa Interactivo
         </span>
-        <h1 style={{margin:0,fontSize:14,fontWeight:500,color:"#d4d0c8",fontFamily:sans}}>
+        <h1 style={{margin:0,fontSize:14,fontWeight:500,color:"#ddd8cc",fontFamily:sans}}>
           Desregulación Proteómica · Alcohol · Hipocampo
         </h1>
-        <span style={{marginLeft:"auto",fontSize:9,color:"#282938",fontFamily:mono}}>
+        <span style={{marginLeft:"auto",fontSize:9,color:"#333",fontFamily:mono}}>
           7 vías · 11 conexiones · dimorfismo sexual
         </span>
       </div>
@@ -331,13 +330,13 @@ function App() {
             <defs>
               {EDGES.map((e,i)=>(
                 <marker key={i} id={`a${i}`} markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
-                  <path d="M0,0L0,5L7,2.5z" fill={e.color} opacity=".75"/>
+                  <path d="M0,0L0,5L7,2.5z" fill={e.color}/>
                 </marker>
               ))}
               {Object.values(NODES).map(n=>(
                 <radialGradient key={n.id} id={`g${n.id}`} cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor={n.color} stopOpacity=".22"/>
-                  <stop offset="100%" stopColor={n.color} stopOpacity=".04"/>
+                  <stop offset="0%" stopColor={n.color} stopOpacity=".30"/>
+                  <stop offset="100%" stopColor={n.color} stopOpacity=".05"/>
                 </radialGradient>
               ))}
             </defs>
@@ -349,14 +348,14 @@ function App() {
               const active=activeEdges.includes(e);
               const dim=sel&&!active;
               return (
-                <g key={i} opacity={dim?.07:active?.9:.30}>
+                <g key={i} opacity={dim?.06:active?1:.35}>
                   <line x1={p.x1} y1={p.y1} x2={p.x2} y2={p.y2}
-                    stroke={e.color} strokeWidth={active?2:1.2}
+                    stroke={e.color} strokeWidth={active?2.2:1.2}
                     strokeDasharray={active?"none":"5,4"}
                     markerEnd={`url(#a${i})`}/>
                   {active&&(
                     <text x={p.mx} y={p.my-7} textAnchor="middle" fontSize="9"
-                      fill={e.color} style={{fontFamily:mono,opacity:.9}}>
+                      fill={e.color} style={{fontFamily:mono}}>
                       {e.label}
                     </text>
                   )}
@@ -367,11 +366,11 @@ function App() {
             {/* Alcohol hub */}
             <g className="hub">
               <circle cx={430} cy={310} r={34} fill="none"
-                stroke="#8a7040" strokeWidth="1" strokeDasharray="3,4"/>
-              <text x={430} y={305} textAnchor="middle" fontSize="9.5"
-                fill="#9a8040" style={{fontFamily:mono,letterSpacing:".16em"}}>EtOH</text>
-              <text x={430} y={320} textAnchor="middle" fontSize="8"
-                fill="#6a5828" style={{fontFamily:mono,letterSpacing:".1em"}}>ALCOHOL</text>
+                stroke="#ffbe00" strokeWidth="1.2" strokeDasharray="3,4"/>
+              <text x={430} y={306} textAnchor="middle" fontSize="10"
+                fill="#ffbe00" style={{fontFamily:mono,letterSpacing:".16em"}}>EtOH</text>
+              <text x={430} y={321} textAnchor="middle" fontSize="8"
+                fill="#cc9800" style={{fontFamily:mono,letterSpacing:".1em"}}>ALCOHOL</text>
             </g>
 
             {/* Nodes */}
@@ -379,23 +378,23 @@ function App() {
               const isSel=sel===n.id;
               const dim=sel&&!connected.has(n.id);
               return (
-                <g key={n.id} className="nd" opacity={dim?.18:1}
+                <g key={n.id} className="nd" opacity={dim?.15:1}
                   onClick={()=>{setSel(sel===n.id?null:n.id);setTab("males");setShowAlc(false);}}>
-                  {isSel&&<circle cx={n.cx} cy={n.cy} r={R+12} fill="none"
-                    stroke={n.color} strokeWidth="1.5" opacity=".4"/>}
+                  {isSel&&<circle cx={n.cx} cy={n.cy} r={R+13} fill="none"
+                    stroke={n.color} strokeWidth="1.5" opacity=".5"/>}
                   <circle cx={n.cx} cy={n.cy} r={R} fill={`url(#g${n.id})`}/>
                   <circle cx={n.cx} cy={n.cy} r={R} fill="none"
-                    stroke={n.color} strokeWidth={isSel?2:1.4}
-                    strokeOpacity={isSel?1:.65}/>
+                    stroke={n.color} strokeWidth={isSel?2.5:1.8}
+                    strokeOpacity={isSel?1:.85}/>
                   <text x={n.cx} y={n.cy-8}
-                    textAnchor="middle" fontSize="11" fill={n.color}
+                    textAnchor="middle" fontSize="11.5" fill={n.color}
                     style={{fontFamily:mono,fontWeight:600,letterSpacing:".04em"}}>
                     {n.abbr}
                   </text>
                   {n.label.map((l,li)=>(
                     <text key={li} x={n.cx} y={n.cy+9+(li*12)}
                       textAnchor="middle" fontSize="8" fill={n.color}
-                      style={{fontFamily:mono,opacity:.6,letterSpacing:".02em"}}>
+                      style={{fontFamily:mono,opacity:.7,letterSpacing:".02em"}}>
                       {l}
                     </text>
                   ))}
@@ -411,26 +410,26 @@ function App() {
 
           {!node ? (
             <div>
-              <p style={{fontSize:11,color:"#3a3a48",fontStyle:"italic",lineHeight:1.7,
+              <p style={{fontSize:11,color:"#444",fontStyle:"italic",lineHeight:1.7,
                 marginBottom:16,fontFamily:sans}}>
                 Selecciona un nodo para ver proteínas desreguladas, logFC, p-valores y nexo con el alcohol.
               </p>
-              <p style={{fontSize:9,color:"#282938",fontFamily:mono,letterSpacing:".14em",
+              <p style={{fontSize:9,color:"#333",fontFamily:mono,letterSpacing:".14em",
                 textTransform:"uppercase",marginBottom:10}}>Vías del mapa</p>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
                 {Object.values(NODES).map(n=>(
                   <div key={n.id} className="nc"
-                    style={{background:`${n.color}08`,borderColor:`${n.color}30`}}
+                    style={{background:`${n.color}10`,borderColor:`${n.color}40`}}
                     onClick={()=>{setSel(n.id);setTab("males");setShowAlc(false);}}
-                    onMouseEnter={e=>e.currentTarget.style.background=`${n.color}14`}
-                    onMouseLeave={e=>e.currentTarget.style.background=`${n.color}08`}>
+                    onMouseEnter={e=>e.currentTarget.style.background=`${n.color}20`}
+                    onMouseLeave={e=>e.currentTarget.style.background=`${n.color}10`}>
                     <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
-                      <div style={{width:6,height:6,borderRadius:"50%",background:n.color,flexShrink:0}}/>
+                      <div style={{width:7,height:7,borderRadius:"50%",background:n.color,flexShrink:0}}/>
                       <span style={{fontSize:10,color:n.color,fontWeight:600,fontFamily:mono}}>
                         {n.label.join(" ")}
                       </span>
                     </div>
-                    <p style={{margin:0,fontSize:10,color:"#3a3a48",lineHeight:1.4,fontFamily:sans}}>
+                    <p style={{margin:0,fontSize:10,color:"#555",lineHeight:1.4,fontFamily:sans}}>
                       {n.desc.slice(0,72)}…
                     </p>
                   </div>
@@ -447,7 +446,7 @@ function App() {
                   <h2 style={{margin:"0 0 4px",fontSize:14,color:node.color,fontWeight:600,fontFamily:mono}}>
                     {node.label.join(" ")}
                   </h2>
-                  <p style={{margin:0,fontSize:11,color:"#555560",lineHeight:1.5,fontFamily:sans}}>
+                  <p style={{margin:0,fontSize:11,color:"#666",lineHeight:1.5,fontFamily:sans}}>
                     {node.desc}
                   </p>
                 </div>
@@ -473,18 +472,18 @@ function App() {
               </div>
 
               {showAlc&&(
-                <div style={{background:"#161208",border:"1px solid #c89a2a30",
+                <div style={{background:"#161208",border:`1px solid ${node.color}44`,
                   borderRadius:3,padding:"11px 13px"}}>
-                  <p style={{margin:"0 0 6px",fontSize:9,color:"#a07820",fontFamily:mono,
+                  <p style={{margin:"0 0 6px",fontSize:9,color:node.color,fontFamily:mono,
                     letterSpacing:".12em",textTransform:"uppercase"}}>Nexo con alcohol</p>
-                  <p style={{margin:0,fontSize:11,color:"#777",lineHeight:1.7,fontFamily:sans}}>
+                  <p style={{margin:0,fontSize:11,color:"#888",lineHeight:1.7,fontFamily:sans}}>
                     {node.alcohol}
                   </p>
                 </div>
               )}
 
               <div>
-                <p style={{margin:"0 0 7px",fontSize:9,color:"#282938",fontFamily:mono,
+                <p style={{margin:"0 0 7px",fontSize:9,color:"#333",fontFamily:mono,
                   letterSpacing:".12em",textTransform:"uppercase"}}>Vías conectadas</p>
                 {EDGES.filter(e=>e.from===sel||e.to===sel).map((e,i)=>{
                   const otherId=e.from===sel?e.to:e.from;
@@ -500,7 +499,7 @@ function App() {
                       <span style={{fontSize:12,color:other.color,fontWeight:600,fontFamily:mono}}>
                         {other.label.join(" ")}
                       </span>
-                      <span style={{fontSize:10,color:"#3a3a48",fontFamily:sans}}>· {e.label}</span>
+                      <span style={{fontSize:10,color:"#555",fontFamily:sans}}>· {e.label}</span>
                     </div>
                   );
                 })}
@@ -508,7 +507,7 @@ function App() {
 
               <button onClick={()=>setSel(null)}
                 style={{alignSelf:"flex-start",background:"transparent",
-                  border:"1px solid #252636",color:"#555",padding:"5px 12px",
+                  border:"1px solid #2a2b3a",color:"#555",padding:"5px 12px",
                   cursor:"pointer",fontFamily:mono,fontSize:10,
                   borderRadius:2,letterSpacing:".07em"}}>
                 ← Volver
@@ -521,12 +520,12 @@ function App() {
       {/* FOOTER */}
       <div style={{borderTop:"1px solid #151620",padding:"5px 22px",display:"flex",
         gap:18,alignItems:"center",flexShrink:0}}>
-        <span style={{fontSize:9,color:"#22233a",fontFamily:mono}}>
-          <span style={{color:"#5aaa7080"}}>↑</span> sobreexpresado &nbsp;·&nbsp;
-          <span style={{color:"#cc606080"}}>↓</span> infraexpresado &nbsp;·&nbsp;
+        <span style={{fontSize:9,color:"#333",fontFamily:mono}}>
+          <span style={{color:"#30e87880"}}>↑</span> sobreexpresado &nbsp;·&nbsp;
+          <span style={{color:"#ff505080"}}>↓</span> infraexpresado &nbsp;·&nbsp;
           <span style={{color:"#66666660"}}>~</span> fosfoproteómica
         </span>
-        <span style={{marginLeft:"auto",fontSize:9,color:"#22233a",fontFamily:mono}}>
+        <span style={{marginLeft:"auto",fontSize:9,color:"#333",fontFamily:mono}}>
           clic en nodo → detalle · clic de nuevo → deseleccionar
         </span>
       </div>
